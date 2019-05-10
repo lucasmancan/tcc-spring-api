@@ -27,9 +27,9 @@ import lombok.ToString;
 
 @Data
 @Entity
-@Table(name="sales")
-@EqualsAndHashCode(callSuper=false, exclude = {"account", "paragraphs", "creationUser", "category"})
-@ToString(callSuper=false, exclude = {"account", "paragraphs", "creationUser", "category"})
+@Table(name="articles")
+@EqualsAndHashCode(callSuper=false, exclude = {"account", "creationUser", "category"})
+@ToString(callSuper=false, exclude = {"account", "creationUser", "category"})
 @AllArgsConstructor
 @NoArgsConstructor
 public class Article {
@@ -45,14 +45,20 @@ public class Article {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn( name ="creation_user_id")
 	private User creationUser;
-	
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<Paragraph> paragraphs = new HashSet<>();
 
 	@Column(name="title")
 	private String title;
+	
+	@Column(name="subtitle")
+	private String subtitle;
+	
+	@Column(name="content")
+	private String content;
 		
-  @ManyToOne(fetch = FetchType.LAZY)
+	@Column(name="subtitle")
+	private String image;
+	
+  	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn( name ="category_id")
 	private ArticleCategory category;  
     
