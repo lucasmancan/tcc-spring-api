@@ -38,9 +38,13 @@ public class User implements UserDetails, Serializable {
 	@GeneratedValue( strategy = GenerationType.AUTO)
 	private Long id;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn( name ="person_id")
-	private Person person;
+	private String name;
+
+	@Column(name="cpf", lenght=11)
+	private String cpf;
+	
+	@Column(name="cnpj", lenght=14)
+	private String cnpj;
 	
 	private String password;
 	
