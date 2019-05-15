@@ -35,16 +35,16 @@ import lombok.ToString;
 public class User implements UserDetails, Serializable {
 
 	@Id
-	@GeneratedValue( strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	
 	private String name;
-
-	@Column(name="cpf", lenght=11)
-	private String cpf;
 	
-	@Column(name="cnpj", lenght=14)
-	private String cnpj;
+	@Enumerated(EnumType.STRING)
+	private PersonType type;
+
+	@Column(name="document", lenght=14)
+	private String document;
 	
 	private String password;
 	
