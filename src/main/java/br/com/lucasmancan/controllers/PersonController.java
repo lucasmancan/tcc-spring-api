@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.lucasmancan.repositories.PersonRepository;
 
 @RestController
-public class PersonController {
+public class UserController {
 
 	@Autowired
 	private PersonRepository personRepository;

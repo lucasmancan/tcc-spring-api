@@ -43,7 +43,7 @@ public class User implements UserDetails, Serializable {
 	private String password;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	private Person person;
+	private String email;
 	
 	private Boolean active;
 	
@@ -80,7 +80,7 @@ public class User implements UserDetails, Serializable {
 	@Override
 	public String getUsername() {
 		// TODO Auto-generated method stub
-		return 
+		return this.email;
 	}
 
 	@Override
