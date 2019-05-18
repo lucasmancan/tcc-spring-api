@@ -36,7 +36,7 @@ import lombok.ToString;
 public class Person {
 
 	enum PersonType{
-		PF, PJ
+		PF, PJ, BO
 	}
 	
 	@Id
@@ -47,9 +47,20 @@ public class Person {
 	@JoinColumn( name ="account_id")
 	private Account account;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	private Email mainEmail;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	private Phone mainPhone;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	private Address mainAddress;
+	
 	private String name;
 		
-	private String document;
+	private String cpf;
+	
+	private String cnpj;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(length = 2)

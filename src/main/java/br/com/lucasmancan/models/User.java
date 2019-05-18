@@ -10,6 +10,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -38,13 +40,10 @@ public class User implements UserDetails, Serializable {
 	@GeneratedValue( strategy = GenerationType.AUTO)
 	private Long id;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn( name ="person_id")
-	private Person person;
-	
 	private String password;
 	
-	private String email;
+	@ManyToOne(fetch = FetchType.LAZY)
+	private Person person;
 	
 	private Boolean active;
 	
@@ -81,7 +80,7 @@ public class User implements UserDetails, Serializable {
 	@Override
 	public String getUsername() {
 		// TODO Auto-generated method stub
-		return this.email;
+		return 
 	}
 
 	@Override
