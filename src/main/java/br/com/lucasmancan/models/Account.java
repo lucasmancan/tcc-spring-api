@@ -1,10 +1,7 @@
 package br.com.lucasmancan.models;
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -25,8 +22,8 @@ import lombok.ToString;
 
 @Entity
 @Table(name="accounts")
-@EqualsAndHashCode(callSuper=false, exclude = {"admin", "users"})
-@ToString(callSuper=false, exclude = {"admin", "users"})
+@EqualsAndHashCode(callSuper=false, exclude = {"admin", "configuration"})
+@ToString(callSuper=false, exclude = {"admin", "configuration"})
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -38,7 +35,7 @@ public class Account {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn( name ="admin_id")
-	private User admin;
+	private AppUser admin;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn( name ="configuration_id")

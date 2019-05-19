@@ -4,13 +4,12 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -23,33 +22,26 @@ import lombok.ToString;
 
 @Data
 @Entity
-@Table(name="products_categories")
-@EqualsAndHashCode(callSuper=false, exclude = {"account", "category", "creationAppUser"})
-@ToString(callSuper=false, exclude = {"account", "parentCategory", "creationAppUser"})
+@Table(name="users_emails")
+@EqualsAndHashCode(callSuper=false, exclude = {"client", "email"})
+@ToString(callSuper=false, exclude = {"client", "email"})
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductCategory  implements Serializable{
+public class UserEmail implements Serializable{
 
-	@Id
-	@GeneratedValue( strategy = GenerationType.AUTO)
-	private Long id;
+	@EmbeddedId
+	private UserEmailPK id;
 	
+	@MapsId("userId")
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn( name ="account_id")
-	private Account account;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn( name ="creation_user_id")
-	private AppUser creationAppUser;
+	@JoinColumn( name ="user_id")
+	private AppUser appUser;
 
+	@MapsId("emailId")
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn( name ="parent_id")
-	private ProductCategory parentCategory;
+	@JoinColumn( name ="email_id")
+	private Email email;
 	
-	private String name;
-	
-	private String description;
-
 	@Column(name="created_at")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;

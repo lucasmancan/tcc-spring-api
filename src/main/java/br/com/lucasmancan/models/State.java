@@ -1,5 +1,6 @@
 package br.com.lucasmancan.models;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -23,23 +24,26 @@ import lombok.ToString;
 @Data
 @Entity
 @Table(name="states")
-@EqualsAndHashCode(callSuper=false, exclude = {"Country"})
-@ToString(callSuper=false, exclude = {"state"})
+@EqualsAndHashCode(callSuper=false, exclude = {"country"})
+@ToString(callSuper=false,exclude = {"country"})
 @AllArgsConstructor
 @NoArgsConstructor
-public class State {
+public class State implements Serializable{
 
 	@Id
 	@GeneratedValue( strategy = GenerationType.AUTO)
 	private Long id;
 	
+	@Column(name="initials", length=2)
+	private String initials;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn( name ="country_id")
 	private Country country;
-
+	
 	@Column(name="name")
 	private String name;
-		
+	
 	@Column(name="created_at")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;

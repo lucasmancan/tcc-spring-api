@@ -1,5 +1,6 @@
 package br.com.lucasmancan.models;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
@@ -8,6 +9,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,12 +31,16 @@ import lombok.ToString;
 @Data
 @Entity
 @Table(name="sales")
-@EqualsAndHashCode(callSuper=false, exclude = {"account", "items", "user"})
-@ToString(callSuper=false, exclude = {"account", "items", "user"})
+@EqualsAndHashCode(callSuper=false, exclude = {"account", "items", "appUser"})
+@ToString(callSuper=false, exclude = {"account", "items", "appUser"})
 @AllArgsConstructor
 @NoArgsConstructor
-public class Sale {
+public class Sale  implements Serializable{
 
+	enum SaleState{
+		PEN, FIN, CAN
+	}
+	
 	@Id
 	@GeneratedValue( strategy = GenerationType.AUTO)
 	private Long id;
@@ -44,7 +51,14 @@ public class Sale {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn( name ="user_id")
-	private User user;
+	private AppUser appUser;
+	
+	private Long code;
+
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "state", length = 3)
+	private SaleState state;
 	
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<SaleItem> items = new HashSet<>();

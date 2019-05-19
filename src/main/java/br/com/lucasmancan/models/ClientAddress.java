@@ -4,13 +4,12 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -23,33 +22,26 @@ import lombok.ToString;
 
 @Data
 @Entity
-@Table(name="products_categories")
-@EqualsAndHashCode(callSuper=false, exclude = {"account", "category", "creationAppUser"})
-@ToString(callSuper=false, exclude = {"account", "parentCategory", "creationAppUser"})
+@Table(name="clients_addresses")
+@EqualsAndHashCode(callSuper=false, exclude = {"client", "address", "creationAppUser"})
+@ToString(callSuper=false, exclude = {"client", "address", "creationAppUser"})
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductCategory  implements Serializable{
+public class ClientAddress implements Serializable{
 
-	@Id
-	@GeneratedValue( strategy = GenerationType.AUTO)
-	private Long id;
+	@EmbeddedId
+	private ClientAddressPK id;
 	
+	@MapsId("clientId")
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn( name ="account_id")
-	private Account account;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn( name ="creation_user_id")
-	private AppUser creationAppUser;
+	@JoinColumn( name ="client_id", nullable = false, referencedColumnName = "id")
+	private Client client;
 
+	@MapsId("addressId")
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn( name ="parent_id")
-	private ProductCategory parentCategory;
+	@JoinColumn(name ="address_id", nullable = false, referencedColumnName = "id")
+	private Address address;
 	
-	private String name;
-	
-	private String description;
-
 	@Column(name="created_at")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;
@@ -57,5 +49,9 @@ public class ProductCategory  implements Serializable{
 	@Column(name="updated_at")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date updatedAt;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn( name ="creation_user_id")
+	private AppUser creationAppUser;
 
 }

@@ -1,9 +1,12 @@
 package br.com.lucasmancan.models;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,7 +30,7 @@ import lombok.ToString;
 @ToString(callSuper=false, exclude = {"account"})
 @AllArgsConstructor
 @NoArgsConstructor
-public class Phone {
+public class Phone implements Serializable{
 
 	@Id
 	@GeneratedValue( strategy = GenerationType.AUTO)
@@ -39,11 +42,16 @@ public class Phone {
 
 	@Column(name="area_code")
 	private String areaCode;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name="type", length = 3)
+	private ContactType type;
 	
 	@Column(name="country_code")
 	private String countryCode;
 
-	private String phone;
+	@Column(name="phone_number")
+	private String phoneNumber;
 		
 	@Column(name="created_at")
 	@Temporal(TemporalType.TIMESTAMP)

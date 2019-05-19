@@ -1,12 +1,17 @@
 package br.com.lucasmancan.repositories;
 
+import java.util.Optional;
+
+import br.com.lucasmancan.models.AppUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
-import br.com.lucasmancan.models.User;
+public interface UserRepository extends JpaRepository<AppUser, Long> {
 
-public interface UserRepository extends JpaRepository<User, Long> {
-
-	@Query(value = "SELECT * FROM users where email =:email", nativeQuery = true)
-	User findByEmail(String email);
+	@Query(value = "SELECT u from AppUser u JOIN FETCH u.account where u.username =:email")
+    AppUser findByEmail(String email);
+	
+	@Query("SELECT p FROM AppUser p WHERE p.account.id =:accountId and p.code=:code")
+	AppUser findById(@Param("accountId") Long accountId, @Param("code") Long Code);
 }

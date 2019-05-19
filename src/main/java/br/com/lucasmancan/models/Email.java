@@ -1,9 +1,12 @@
 package br.com.lucasmancan.models;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -23,29 +26,27 @@ import lombok.ToString;
 @Data
 @Entity
 @Table(name="emails")
-@EqualsAndHashCode(callSuper=false, exclude = {"person"})
-@ToString(callSuper=false, exclude = {"person"})
+@EqualsAndHashCode(callSuper=false, exclude = {"account"})
+@ToString(callSuper=false, exclude = {"account"})
 @AllArgsConstructor
 @NoArgsConstructor
-public class Email {
+public class Email  implements Serializable{
 
-	enum EmailType{
-		COM, PES
-	}
-	
+
 	@Id
 	@GeneratedValue( strategy = GenerationType.AUTO)
 	private Long id;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn( name ="person_id")
-	private Person person;
-
-	@Column(name="type")
-	private String type;
+	@JoinColumn( name ="account_id")
+	private Account account;
 	
 	@Column(name="email")
 	private String email;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name="type", length = 3)
+	private ContactType type;
 	
 	@Column(name="created_at")
 	@Temporal(TemporalType.TIMESTAMP)

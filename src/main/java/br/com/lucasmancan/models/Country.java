@@ -1,5 +1,6 @@
 package br.com.lucasmancan.models;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -24,7 +25,7 @@ import lombok.ToString;
 @ToString(callSuper=false)
 @AllArgsConstructor
 @NoArgsConstructor
-public class Country {
+public class Country implements Serializable {
 
 	@Id
 	@GeneratedValue( strategy = GenerationType.AUTO)

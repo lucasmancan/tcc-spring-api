@@ -1,5 +1,6 @@
 package br.com.lucasmancan.models;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -23,11 +24,11 @@ import lombok.ToString;
 @Data
 @Entity
 @Table(name="products")
-@EqualsAndHashCode(callSuper=false, exclude = {"account", "category", "creationUser"})
-@ToString(callSuper=false, exclude = {"account", "category", "creationUser"})
+@EqualsAndHashCode(callSuper=false, exclude = {"account", "category", "creationAppUser"})
+@ToString(callSuper=false, exclude = {"account", "category", "creationAppUser"})
 @AllArgsConstructor
 @NoArgsConstructor
-public class Product {
+public class Product  implements Serializable{
 
 	@Id
 	@GeneratedValue( strategy = GenerationType.AUTO)
@@ -37,9 +38,12 @@ public class Product {
 	@JoinColumn( name ="account_id")
 	private Account account;
 	
+	
+	private Long code;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn( name ="creation_user_id")
-	private User creationUser;
+	private AppUser creationAppUser;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn( name ="user_id")

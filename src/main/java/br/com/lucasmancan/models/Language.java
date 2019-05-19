@@ -1,5 +1,7 @@
 package br.com.lucasmancan.models;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,7 +22,7 @@ import lombok.ToString;
 @ToString(callSuper = false)
 @AllArgsConstructor
 @NoArgsConstructor
-public class Language {
+public class Language  implements Serializable{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

@@ -1,13 +1,12 @@
 package br.com.lucasmancan.models;
 
+import java.io.Serializable;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
-import javax.annotation.Generated;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,6 +17,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.ForeignKey;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -25,35 +26,42 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Data
-@Entity
-@Table(name="addresses")
-@EqualsAndHashCode(callSuper=false, exclude = {"account"})
-@ToString(callSuper=false, exclude = {"account"})
 @AllArgsConstructor
 @NoArgsConstructor
-public class Address {
-
+@Entity
+@Table(name="addresses")
+@EqualsAndHashCode(callSuper=false, exclude = {"country", "state"})
+@ToString(callSuper=false, exclude = {"country", "state"})
+public class Address implements Serializable{
+	
 	@Id
 	@GeneratedValue( strategy = GenerationType.AUTO)
 	private Long id;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn( name ="account_id")
-	private Account account;
-
 	@Column(name="street")
 	private String street;
 	
 	@Column(name="number")
 	private String number;
 	
-	@Column(name="zip_code")
-	private String zipCode;
+	@Column(name="zip_code", length = 10)
+	private Integer zipCode;
 
+	@Column(name="city", length = 255)
+	private String city;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name="type", length = 3)
+	private ContactType type;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn( name ="city_id")
-	private City city;
-		
+	@JoinColumn( name ="state_id", referencedColumnName = "id")
+	private State state;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn( name ="country_id")
+	private Country country;
+	
 	@Column(name="created_at")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;

@@ -1,5 +1,6 @@
 package br.com.lucasmancan.models;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -28,7 +29,7 @@ import lombok.ToString;
 @ToString(callSuper=false, exclude = {"product"})
 @AllArgsConstructor
 @NoArgsConstructor
-public class SaleItem {
+public class SaleItem  implements Serializable{
 
 	@Id
 	@GeneratedValue( strategy = GenerationType.AUTO)
