@@ -2,42 +2,44 @@ package br.com.lucasmancan.services;
 
 import br.com.lucasmancan.exceptions.AppNotFoundException;
 import br.com.lucasmancan.exceptions.AppSecurityContextException;
-import br.com.lucasmancan.models.AppUser;
 import br.com.lucasmancan.models.Client;
-import br.com.lucasmancan.repositories.UserRepository;
+import br.com.lucasmancan.models.Client;
+import br.com.lucasmancan.models.Sale;
+import br.com.lucasmancan.repositories.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class UserService extends AbstractService<AppUser> {
+public class ClientService extends AbstractService<Client> {
 
 	@Autowired
-	private UserRepository repository;
+	private ClientRepository repository;
 
 	@Override
-	public AppUser save(AppUser entity) {
+	public Client save(Client entity) {
 		return repository.save(entity);
 	}
 
 	@Override
-	public void remove(AppUser entity) {
+	public void remove(Client entity) {
 		repository.delete(entity);
 	}
 
 	@Override
-	public AppUser findById(Long id) throws AppNotFoundException {
+	public Client findById(Long id) throws AppNotFoundException {
 		return repository.findById(id).orElseThrow(() -> new AppNotFoundException());
 	}
 
+
 	@Override
-	public AppUser findByCode(Long code) throws AppNotFoundException, AppSecurityContextException {
+	public Client findByCode(Long code) throws AppNotFoundException, AppSecurityContextException {
 		return repository.findByCode(getLoggedAccount().getId(), code).orElseThrow(() -> new AppNotFoundException());
 	}
 
 	@Override
-	public List<AppUser> findAll() {
-		return repository.findAll();
+	public List<Client> findAll() throws AppSecurityContextException {
+		return repository.findAll(getLoggedAccount().getId());
 	}
 }

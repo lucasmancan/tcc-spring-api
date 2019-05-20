@@ -167,7 +167,5 @@ public class AppUser implements UserDetails, Serializable {
 		// TODO Auto-generated method stub
 		return this.admin;
 	}
-	
-	
 
 }

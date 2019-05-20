@@ -13,5 +13,5 @@ public interface UserRepository extends JpaRepository<AppUser, Long> {
     AppUser findByEmail(String email);
 	
 	@Query("SELECT p FROM AppUser p WHERE p.account.id =:accountId and p.code=:code")
-	AppUser findById(@Param("accountId") Long accountId, @Param("code") Long Code);
+	Optional<AppUser> findByCode(@Param("accountId") Long accountId, @Param("code") Long Code);
 }

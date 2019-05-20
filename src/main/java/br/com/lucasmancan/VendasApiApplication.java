@@ -3,6 +3,7 @@ package br.com.lucasmancan;
 import br.com.lucasmancan.models.AppUser;
 import br.com.lucasmancan.repositories.UserRepository;
 import br.com.lucasmancan.services.AppService;
+import org.hibernate.hql.internal.ast.tree.BinaryLogicOperatorNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,15 +22,10 @@ import java.util.HashMap;
 @RestController
 public class VendasApiApplication {
 
-
-
 	public static void main(String[] args) {
 		SpringApplication.run(VendasApiApplication.class, args);
-
-
-
-
 	}
+
 	@GetMapping("/")
 	public String teste() {
 
@@ -44,8 +40,12 @@ public class VendasApiApplication {
 
 		var teste = (HashMap) principal.getDetails();
 
+		if (teste.get("account") instanceof String){
+			System.out.println("String");
+		}
+		System.out.println();
 
-		return new ResponseEntity(teste.get("user"), HttpStatus.OK);
+		return new ResponseEntity(principal,  HttpStatus.OK);
 	}
 
 }

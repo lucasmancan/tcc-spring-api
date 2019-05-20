@@ -14,7 +14,7 @@ import br.com.lucasmancan.models.Client;
 public interface ClientRepository extends JpaRepository<Client, Long> {
 	
 	   @Query("SELECT p FROM Client p WHERE p.account.id =:accountId and p.code=:code")
-	   public Optional<Client> findById(@Param("accountId") Long accountId, @Param("code") Long Code);
+	   public Optional<Client> findByCode(@Param("accountId") Long accountId, @Param("code") Long Code);
 	   
 	   @Query("SELECT p FROM Client p WHERE p.account.id =:accountId")
 	   public List<Client> findAll(@Param("accountId") Long accountId);

@@ -39,9 +39,7 @@ public class PublicController {
         account.setActive(true);
         account.setCreatedAt(new Date());
 
-
         account = accountRepository.save(account);
-
 
         var user = new AppUser("lucas",
                 new BCryptPasswordEncoder().encode("root"));

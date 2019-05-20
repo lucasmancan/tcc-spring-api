@@ -14,7 +14,7 @@ import br.com.lucasmancan.models.Product;
 public interface ProductRepository extends JpaRepository<Product, Long> {
 	
 	   @Query("SELECT p FROM Product p WHERE p.account.id =:accountId and p.code=:code")
-	   public Optional<Product> findById(@Param("accountId") Long accountId, @Param("code") Long Code);
+	   public Optional<Product> findByCode(@Param("accountId") Long accountId, @Param("code") Long Code);
 	   
 	   @Query("SELECT p FROM Product p WHERE p.account.id =:accountId")
 	   public List<Product> findAll(@Param("accountId") Long accountId);

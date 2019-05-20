@@ -34,10 +34,6 @@ public class Article {
 	private Long id;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn( name ="account_id")
-	private Account account;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn( name ="creation_user_id")
 	private AppUser creationAppUser;
 
