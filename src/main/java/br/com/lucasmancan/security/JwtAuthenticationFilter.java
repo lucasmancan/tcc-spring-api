@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.servlet.FilterChain;
@@ -68,9 +69,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		AppUser user =
 				(AppUser) authentication.getPrincipal();
 
-		var roles = user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
+		List<String> roles = user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
 
-		var signingKey = SecurityConstants.JWT_SECRET.getBytes();
+		byte[] signingKey = SecurityConstants.JWT_SECRET.getBytes();
 
 		var token = Jwts.builder()
 				.signWith(Keys.hmacShaKeyFor(signingKey), SignatureAlgorithm.HS512)
@@ -80,8 +81,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 				.setSubject(user.getUsername())
 				.setExpiration(new Date(System.currentTimeMillis() + 864000000L))
 				.claim("roles", roles)
-				.claim("accountId", user.getAccount().getId())
-				.claim("appUserId", user.getId())
 				.compact();
 
 		response.addHeader(SecurityConstants.TOKEN_HEADER, SecurityConstants.TOKEN_PREFIX + token);

@@ -21,15 +21,12 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import lombok.*;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @Data
 @Entity
@@ -38,13 +35,31 @@ import lombok.ToString;
 @ToString(callSuper = false, exclude = {"account", "mainAddress", "mainPhone", "emails", "phones", "addresses"})
 @AllArgsConstructor
 @NoArgsConstructor
-public class AppUser implements UserDetails, Serializable {
-
+public class AppUser implements Serializable, Authentication, UserDetails {
 
 	public AppUser(String username, String password){
 		this.username = username;
 		this.password = password;
 	}
+
+//	public AppUser(String username, String password, Collection<? extends GrantedAuthority> authorities){
+//		super(username, password, authorities);
+//	}
+//
+//	public AppUser(String username, String password){
+//		super(username, password, null);
+//		this.username = username;
+//		this.password = password;
+//	}
+//
+//	public AppUser(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities, Long code) {
+//		super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
+//		this.code = code;
+//	}
+//
+//	public AppUser(){
+//		super(null, null, null);
+//	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -119,12 +134,37 @@ public class AppUser implements UserDetails, Serializable {
 	private Date loggedAt;
 
 	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
+	public Collection<GrantedAuthority> getAuthorities() {
 		// TODO Auto-generated method stub
 		var adminList = AuthorityUtils.createAuthorityList("ROLE_ADMIN","ROLE_USER");
 		var userList = AuthorityUtils.createAuthorityList("ROLE_USER");
-		
+
 		return this.admin ? adminList : userList;
+	}
+
+	@Override
+	public Object getCredentials() {
+		return password;
+	}
+
+	@Override
+	public Object getDetails() {
+		return null;
+	}
+
+	@Override
+	public Object getPrincipal() {
+		return this.getUsername();
+	}
+
+	@Override
+	public boolean isAuthenticated() {
+		return true;
+	}
+
+	@Override
+	public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
+
 	}
 
 	@Override

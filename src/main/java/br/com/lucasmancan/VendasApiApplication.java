@@ -38,12 +38,6 @@ public class VendasApiApplication {
 
 		Authentication principal = SecurityContextHolder.getContext().getAuthentication();
 
-		var teste = (HashMap) principal.getDetails();
-
-		if (teste.get("account") instanceof String){
-			System.out.println("String");
-		}
-		System.out.println();
 
 		return new ResponseEntity(principal,  HttpStatus.OK);
 	}
