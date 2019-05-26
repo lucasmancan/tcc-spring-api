@@ -7,6 +7,7 @@ import br.com.lucasmancan.models.Product;
 import br.com.lucasmancan.repositories.ProductRepository;
 import br.com.lucasmancan.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,6 +29,11 @@ public class ProductService extends AbstractService<Product> {
 	}
 
 	@Override
+	public List findAll(Pageable pageable) throws AppSecurityContextException {
+		return repository.findAll();
+	}
+
+	@Override
 	public Product findById(Long id) throws AppNotFoundException {
 		return repository.findById(id).orElseThrow(() -> new AppNotFoundException());
 	}
@@ -37,7 +43,6 @@ public class ProductService extends AbstractService<Product> {
 		return repository.findByCode(getLoggedAccount().getId(), code).orElseThrow(() -> new AppNotFoundException());
 	}
 
-	@Override
 	public List<Product> findAll() {
 		return repository.findAll();
 	}

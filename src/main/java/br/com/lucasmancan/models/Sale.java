@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -37,7 +38,7 @@ import lombok.ToString;
 @NoArgsConstructor
 public class Sale  implements Serializable{
 
-	enum SaleState{
+	public enum SaleState{
 		PEN, FIN, CAN
 	}
 	
@@ -50,18 +51,17 @@ public class Sale  implements Serializable{
 	private Account account;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn( name ="user_id")
-	private AppUser appUser;
+	@JoinColumn( name ="employee_id")
+	private AppUser employee;
 	
 	private Long code;
-
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "state", length = 3)
 	private SaleState state;
 	
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<SaleItem> items = new HashSet<>();
+	private List<SaleItem> items;
 
 	@Column(name="other_expenses")
 	private BigDecimal otherExpenses;
@@ -81,5 +81,9 @@ public class Sale  implements Serializable{
 	@Column(name="updated_at")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date updatedAt;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn( name ="update_user_id")
+	private AppUser updatedUser;
 
 }

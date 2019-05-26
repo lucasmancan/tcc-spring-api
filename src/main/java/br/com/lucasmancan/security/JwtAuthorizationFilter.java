@@ -9,6 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import br.com.lucasmancan.dtos.AppUserAuthentication;
 import br.com.lucasmancan.models.AppUser;
 import br.com.lucasmancan.services.AppService;
 import io.jsonwebtoken.*;
@@ -40,7 +41,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws IOException, ServletException, java.io.IOException {
 
-        AppUser authentication = getAuthentication(request);
+        var authentication = getAuthentication(request);
         String header = request.getHeader(SecurityConstants.TOKEN_HEADER);
 
         if (StringUtils.isEmpty(header) || !header.startsWith(SecurityConstants.TOKEN_PREFIX)) {
@@ -67,7 +68,10 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                         .map(authority -> new SimpleGrantedAuthority((String) authority)).collect(Collectors.toList());
 
                 if (StringUtils.isNotEmpty(username)) {
-                    return (AppUser) userDetailService.loadUserByUsername(username);
+
+                    var user =  (AppUser) userDetailService.loadUserByUsername(username);
+
+                    return user;
                 }
             } catch (ExpiredJwtException exception) {
                 log.warn("Request to parse expired JWT : {} failed : {}", token, exception.getMessage());

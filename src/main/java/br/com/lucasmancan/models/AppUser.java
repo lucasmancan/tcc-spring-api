@@ -21,6 +21,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -31,35 +32,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Data
 @Entity
 @Table(name = "users")
-@EqualsAndHashCode(callSuper = false, exclude = {"account", "mainAddress", "mainPhone", "emails", "phones", "addresses"})
-@ToString(callSuper = false, exclude = {"account", "mainAddress", "mainPhone", "emails", "phones", "addresses"})
+@EqualsAndHashCode(callSuper = false, exclude = {"account", "mainAddress", "mainPhone"})
+@ToString(callSuper = false, exclude = {"account", "mainAddress", "mainPhone"})
 @AllArgsConstructor
 @NoArgsConstructor
-public class AppUser implements Serializable, Authentication, UserDetails {
+public class AppUser implements Serializable, UserDetails, Authentication {
 
 	public AppUser(String username, String password){
 		this.username = username;
 		this.password = password;
 	}
-
-//	public AppUser(String username, String password, Collection<? extends GrantedAuthority> authorities){
-//		super(username, password, authorities);
-//	}
-//
-//	public AppUser(String username, String password){
-//		super(username, password, null);
-//		this.username = username;
-//		this.password = password;
-//	}
-//
-//	public AppUser(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities, Long code) {
-//		super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
-//		this.code = code;
-//	}
-//
-//	public AppUser(){
-//		super(null, null, null);
-//	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -86,6 +68,7 @@ public class AppUser implements Serializable, Authentication, UserDetails {
 	@Column(name = "document", length = 14)
 	private String document;
 
+	@JsonIgnore
 	private String password;
 
 	@Column(name = "username")
@@ -99,15 +82,15 @@ public class AppUser implements Serializable, Authentication, UserDetails {
 	@JoinColumn(name = "main_address_id")
 	private Address mainAddress;
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "appUser")
-	private Set<UserEmail> emails = new HashSet<>();
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "appUser")
-	private Set<UserPhone> phones = new HashSet<>();
-	
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "appUser")
-	private Set<UserAddress> addresses = new HashSet<>();
-	
+//	@OneToMany(fetch = FetchType.LAZY, mappedBy = "appUser")
+//	private Set<UserEmail> emails = new HashSet<>();
+//
+//	@OneToMany(fetch = FetchType.LAZY, mappedBy = "appUser")
+//	private Set<UserPhone> phones = new HashSet<>();
+//
+//	@OneToMany(fetch = FetchType.LAZY, mappedBy = "appUser")
+//	private Set<UserAddress> addresses = new HashSet<>();
+//
 	/*@OneToMany(fetch = FetchType.LAZY, mappedBy = "creationAppUser")
 	private Set<UserPermissions> permissions = new HashSet<>();*/
 
@@ -144,7 +127,7 @@ public class AppUser implements Serializable, Authentication, UserDetails {
 
 	@Override
 	public Object getCredentials() {
-		return password;
+		return null;
 	}
 
 	@Override
@@ -154,7 +137,7 @@ public class AppUser implements Serializable, Authentication, UserDetails {
 
 	@Override
 	public Object getPrincipal() {
-		return this.getUsername();
+		return this.username;
 	}
 
 	@Override
@@ -166,6 +149,7 @@ public class AppUser implements Serializable, Authentication, UserDetails {
 	public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
 
 	}
+
 
 	@Override
 	public String getPassword() {

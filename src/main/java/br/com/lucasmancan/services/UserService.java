@@ -6,8 +6,10 @@ import br.com.lucasmancan.models.AppUser;
 import br.com.lucasmancan.models.Client;
 import br.com.lucasmancan.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Pageable;
 import java.util.List;
 
 @Service
@@ -26,6 +28,8 @@ public class UserService extends AbstractService<AppUser> {
 		repository.delete(entity);
 	}
 
+
+
 	@Override
 	public AppUser findById(Long id) throws AppNotFoundException {
 		return repository.findById(id).orElseThrow(() -> new AppNotFoundException());
@@ -37,7 +41,7 @@ public class UserService extends AbstractService<AppUser> {
 	}
 
 	@Override
-	public List<AppUser> findAll() {
+	public Page<AppUser> findAll(Pageable pageable) {
 		return repository.findAll();
 	}
 }

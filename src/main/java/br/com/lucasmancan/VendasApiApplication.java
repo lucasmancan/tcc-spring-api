@@ -1,5 +1,6 @@
 package br.com.lucasmancan;
 
+import br.com.lucasmancan.dtos.AppUserAuthentication;
 import br.com.lucasmancan.models.AppUser;
 import br.com.lucasmancan.repositories.UserRepository;
 import br.com.lucasmancan.services.AppService;
@@ -28,18 +29,8 @@ public class VendasApiApplication {
 
 	@GetMapping("/")
 	public String teste() {
-
 		return "index";
 	}
 
-	@GetMapping("/home")
-	public ResponseEntity home(@AuthenticationPrincipal UserDetails user)
-	{
-
-		Authentication principal = SecurityContextHolder.getContext().getAuthentication();
-
-
-		return new ResponseEntity(principal,  HttpStatus.OK);
-	}
 
 }

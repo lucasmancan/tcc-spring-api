@@ -3,6 +3,9 @@ package br.com.lucasmancan.repositories;
 import java.util.List;
 import java.util.Optional;
 
+import br.com.lucasmancan.dtos.SaleDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -15,8 +18,8 @@ import br.com.lucasmancan.models.Sale;
 public interface SaleRepository extends PagingAndSortingRepository<Sale, Long> {
 	
 	   @Query("SELECT p FROM Sale p WHERE p.account.id =:accountId and p.code=:code")
-	   public Optional<Sale> findByCode(@Param("accountId") Long accountId, @Param("code") Long Code);
+	    Optional<Sale> findByCode(@Param("accountId") Long accountId, @Param("code") Long Code);
 	   
-	   @Query("SELECT p FROM Sale p WHERE p.account.id =:accountId")
-	   public List<Sale> findAll(@Param("accountId") Long accountId);
+	   	@Query(value = "SELECT p FROM Sale p WHERE p.account.id =:accountId")
+	    List<SaleDTO> findAll(@Param("accountId") Long accountId, Page page);
 }
