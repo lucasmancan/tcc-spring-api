@@ -1,10 +1,7 @@
 package br.com.lucasmancan.services;
 
 import br.com.lucasmancan.exceptions.AppNotFoundException;
-import br.com.lucasmancan.exceptions.AppSecurityContextException;
 import br.com.lucasmancan.models.Client;
-import br.com.lucasmancan.models.Client;
-import br.com.lucasmancan.models.Sale;
 import br.com.lucasmancan.repositories.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,7 +27,7 @@ public class ClientService extends AbstractService<Client> {
 	}
 
 	@Override
-	public Page<Client> findAll(Pageable pageable) throws AppSecurityContextException {
+    public Page<Client> findAll(Pageable pageable) {
 		return repository.findAll(getLoggedAccount().getId(), pageable);
 	}
 
@@ -46,6 +43,6 @@ public class ClientService extends AbstractService<Client> {
 	}
 
 	public List<Client> findAll() {
-		return repository.findAll(getLoggedAccount().getId());
+        return repository.findAll();
 	}
 }

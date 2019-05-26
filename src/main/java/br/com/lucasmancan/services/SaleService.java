@@ -1,13 +1,8 @@
 package br.com.lucasmancan.services;
 
-import br.com.lucasmancan.dtos.SaleDTO;
 import br.com.lucasmancan.exceptions.AppNotFoundException;
-import br.com.lucasmancan.exceptions.AppSecurityContextException;
-import br.com.lucasmancan.models.AppUser;
-import br.com.lucasmancan.models.Sale;
 import br.com.lucasmancan.models.Sale;
 import br.com.lucasmancan.models.SaleItem;
-import br.com.lucasmancan.repositories.SaleRepository;
 import br.com.lucasmancan.repositories.SaleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,7 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -103,13 +97,13 @@ public class SaleService extends AbstractService<Sale> {
 	}
 
 	@Override
-	public Page<Sale> findAll(Pageable pageable) throws AppSecurityContextException {
+	public Page<Sale> findAll(Pageable pageable) {
 		return repository.findAll(pageable);
 	}
 
 	@Override
-	public List findAll() throws AppSecurityContextException {
-		return null;
+	public List findAll() {
+		return repository.findAll();
 	}
 
 	@Override

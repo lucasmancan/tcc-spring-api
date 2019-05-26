@@ -1,12 +1,10 @@
 package br.com.lucasmancan.services;
 
 import br.com.lucasmancan.exceptions.AppNotFoundException;
-import br.com.lucasmancan.exceptions.AppSecurityContextException;
-import br.com.lucasmancan.models.Product;
 import br.com.lucasmancan.models.Product;
 import br.com.lucasmancan.repositories.ProductRepository;
-import br.com.lucasmancan.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -29,8 +27,8 @@ public class ProductService extends AbstractService<Product> {
 	}
 
 	@Override
-	public List findAll(Pageable pageable) throws AppSecurityContextException {
-		return repository.findAll();
+    public Page<Product> findAll(Pageable pageable) {
+        return repository.findAll(pageable);
 	}
 
 	@Override
@@ -39,7 +37,7 @@ public class ProductService extends AbstractService<Product> {
 	}
 
 	@Override
-	public Product findByCode(Long code) throws AppNotFoundException, AppSecurityContextException {
+    public Product findByCode(Long code) throws AppNotFoundException {
 		return repository.findByCode(getLoggedAccount().getId(), code).orElseThrow(() -> new AppNotFoundException());
 	}
 

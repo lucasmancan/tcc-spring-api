@@ -1,11 +1,10 @@
 package br.com.lucasmancan.services;
 
 import br.com.lucasmancan.exceptions.AppNotFoundException;
-import br.com.lucasmancan.exceptions.AppSecurityContextException;
-import br.com.lucasmancan.models.Article;
 import br.com.lucasmancan.models.Article;
 import br.com.lucasmancan.repositories.ArticleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -28,8 +27,8 @@ public class ArticleService extends AbstractService<Article> {
 	}
 
 	@Override
-	public List findAll(Pageable pageable) {
-		return repository.findAll();
+    public Page<Article> findAll(Pageable pageable) {
+        return repository.findAll(pageable);
 	};
 
 	@Override
