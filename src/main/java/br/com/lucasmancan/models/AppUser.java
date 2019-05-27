@@ -21,6 +21,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -38,7 +39,7 @@ import lombok.ToString;
 @ToString(callSuper = false, exclude = {"account", "mainAddress", "mainPhone", "emails", "phones", "addresses"})
 @AllArgsConstructor
 @NoArgsConstructor
-public class AppUser implements UserDetails, Serializable {
+public class AppUser  implements UserDetails, Serializable {
 
 
 	public AppUser(String username, String password){
@@ -46,6 +47,14 @@ public class AppUser implements UserDetails, Serializable {
 		this.password = password;
 	}
 
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		// TODO Auto-generated method stub
+		var adminList = AuthorityUtils.createAuthorityList("ROLE_ADMIN","ROLE_USER");
+		var userList = AuthorityUtils.createAuthorityList("ROLE_USER");
+
+		return this.admin ? adminList : userList;
+	}
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
@@ -117,15 +126,6 @@ public class AppUser implements UserDetails, Serializable {
 	@Column(name = "logged_at")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date loggedAt;
-
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		// TODO Auto-generated method stub
-		var adminList = AuthorityUtils.createAuthorityList("ROLE_ADMIN","ROLE_USER");
-		var userList = AuthorityUtils.createAuthorityList("ROLE_USER");
-		
-		return this.admin ? adminList : userList;
-	}
 
 	@Override
 	public String getPassword() {

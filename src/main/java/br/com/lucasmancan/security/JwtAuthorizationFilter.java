@@ -9,6 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import br.com.lucasmancan.models.AppUser;
 import br.com.lucasmancan.services.AppService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -43,7 +44,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 			throws IOException, ServletException, java.io.IOException {
 		
 		var authentication = getAuthentication(request);
-		var header = request.getHeader(SecurityConstants.TOKEN_HEADER);
+		var header  request.getHeader(SecurityConstants.TOKEN_HEADER);
 
 		if (StringUtils.isEmpty(header) || !header.startsWith(SecurityConstants.TOKEN_PREFIX)) {
 			filterChain.doFilter(request, response);
@@ -54,7 +55,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 		filterChain.doFilter(request, response);
 	}
 
-	private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
+	private AppUser getAuthentication(HttpServletRequest request) {
 		var token = request.getHeader(SecurityConstants.TOKEN_HEADER);
 
 		if (StringUtils.isNotEmpty(token)) {
@@ -82,13 +83,13 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 				jwtDetails.put("user", parsedToken.getBody().get("appUserId"));
 
 
-				if (StringUtils.isNotEmpty(user)) {
-
-					var usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(user, null, authorities);
-					usernamePasswordAuthenticationToken.setDetails(jwtDetails);
-
-					return usernamePasswordAuthenticationToken;
-				}
+//				if (StringUtils.isNotEmpty(user)) {
+//
+//					var appUser = userRepository.findBy;
+//					usernamePasswordAuthenticationToken.setDetails(jwtDetails);
+//
+//					return usernamePasswordAuthenticationToken;
+//				}
 			} catch (ExpiredJwtException exception) {
 				log.warn("Request to parse expired JWT : {} failed : {}", token, exception.getMessage());
 			} catch (UnsupportedJwtException exception) {
