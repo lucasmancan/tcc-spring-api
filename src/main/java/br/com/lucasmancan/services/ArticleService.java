@@ -1,11 +1,11 @@
 package br.com.lucasmancan.services;
 
 import br.com.lucasmancan.exceptions.AppNotFoundException;
-import br.com.lucasmancan.exceptions.AppSecurityContextException;
-import br.com.lucasmancan.models.Article;
 import br.com.lucasmancan.models.Article;
 import br.com.lucasmancan.repositories.ArticleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,8 +26,14 @@ public class ArticleService extends AbstractService<Article> {
 		repository.delete(entity);
 	}
 
+    public Page<Article> findAll(Pageable pageable) {
+        return repository.findAll(pageable);
+    }
+
+    ;
+
 	@Override
-	public Article findByCode(Long code) throws AppNotFoundException, AppSecurityContextException {
+    public Article findByCode(Long code) throws AppNotFoundException {
 		return repository.findById(code).orElseThrow(() -> new AppNotFoundException());
 	}
 
@@ -36,8 +42,8 @@ public class ArticleService extends AbstractService<Article> {
 		return repository.findById(id).orElseThrow(() -> new AppNotFoundException());
 	}
 
-	@Override
-	public List<Article> findAll() {
+
+    public List<Article> findAll() {
 		return repository.findAll();
 	}
 }

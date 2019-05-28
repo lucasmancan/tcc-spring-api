@@ -1,9 +1,8 @@
 package br.com.lucasmancan.services;
 
 import br.com.lucasmancan.exceptions.AppNotFoundException;
-import br.com.lucasmancan.exceptions.AppSecurityContextException;
 
-import java.util.List;
+import java.util.Collection;
 
 public interface AppService<T> {
 
@@ -13,8 +12,10 @@ public interface AppService<T> {
 
     <T> T findById(Long id) throws AppNotFoundException;
 
-    <T> T findByCode(Long code) throws AppNotFoundException, AppSecurityContextException;
+    <T> T findByCode(Long code) throws AppNotFoundException;
 
-    List<T> findAll() throws AppSecurityContextException;
+//    Page<T> findAll(Pageable pageable);
+
+    Collection<T> findAll();
 
 }

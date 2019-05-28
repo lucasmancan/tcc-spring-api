@@ -1,26 +1,11 @@
 package br.com.lucasmancan.models;
 
+import lombok.*;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @Data
 @Entity
@@ -38,7 +23,13 @@ public class SaleItem  implements Serializable{
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn( name ="product_id")
 	private Product product;
-	
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sale_id")
+    private Sale sale;
+
+
 	@Column(name="other_expenses")
 	private BigDecimal otherExpenses;
 	

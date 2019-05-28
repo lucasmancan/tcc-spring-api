@@ -1,22 +1,22 @@
 package br.com.lucasmancan.repositories;
 
-import java.util.List;
-import java.util.Optional;
-
+import br.com.lucasmancan.dtos.SaleDTO;
+import br.com.lucasmancan.models.Sale;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import br.com.lucasmancan.models.Sale;
+import java.util.Optional;
 
 @Repository
-public interface SaleRepository extends PagingAndSortingRepository<Sale, Long> {
-	
-	   @Query("SELECT p FROM Sale p WHERE p.account.id =:accountId and p.code=:code")
-	   public Optional<Sale> findByCode(@Param("accountId") Long accountId, @Param("code") Long Code);
-	   
-	   @Query("SELECT p FROM Sale p WHERE p.account.id =:accountId")
-	   public List<Sale> findAll(@Param("accountId") Long accountId);
+public interface SaleRepository extends JpaRepository<Sale, Long> {
+
+	@Query("SELECT p FROM Sale p JOIN FETCH p.account a LEFT JOIN FETCH p.items WHERE a.id =:accountId and p.code=:code")
+	Optional<Sale> findByCode(@Param("accountId") Long accountId, @Param("code") Long Code);
+
+	@Query(value = "SELECT p FROM Sale p WHERE p.account.id =:accountId")
+	Page<SaleDTO> findAll(@Param("accountId") Long accountId, Pageable pageable);
 }

@@ -1,32 +1,12 @@
 package br.com.lucasmancan.models;
 
+import lombok.*;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import java.util.List;
 
 @Data
 @Entity
@@ -37,9 +17,9 @@ import lombok.ToString;
 @NoArgsConstructor
 public class Sale  implements Serializable{
 
-	enum SaleState{
-		PEN, FIN, CAN
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "employee_id")
+    private AppUser employee;
 	
 	@Id
 	@GeneratedValue( strategy = GenerationType.AUTO)
@@ -48,20 +28,17 @@ public class Sale  implements Serializable{
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn( name ="account_id")
 	private Account account;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn( name ="user_id")
-	private AppUser appUser;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SaleItem> items;
 	
 	private Long code;
-
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "state", length = 3)
 	private SaleState state;
-	
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<SaleItem> items = new HashSet<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "update_user_id")
+    private AppUser updatedUser;
 
 	@Column(name="other_expenses")
 	private BigDecimal otherExpenses;
@@ -81,5 +58,9 @@ public class Sale  implements Serializable{
 	@Column(name="updated_at")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date updatedAt;
+
+    public enum SaleState {
+        PEN, FIN, CAN
+    }
 
 }
