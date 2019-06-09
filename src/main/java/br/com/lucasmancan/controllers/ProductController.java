@@ -41,7 +41,7 @@ public class ProductController {
 
     @ResponseBody
     @GetMapping("/{code}")
-    public ResponseEntity getByCode(@PathParam("code") Long code) {
+    public ResponseEntity getByCode(@PathVariable("code") Long code) {
         try {
 
             var product = productService.findByCode(code);
@@ -65,7 +65,7 @@ public class ProductController {
 
         category = productCategoryService.save(category);
 
-        for (var i = 0; i < 20; i++) {
+        for (var i = 0; i < 500; i++) {
 
             Product product = new Product();
             product.setName("Produto teste " + i);

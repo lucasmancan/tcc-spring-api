@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.websocket.server.PathParam;
 import java.math.BigDecimal;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class SaleController {
 
     @ResponseBody
     @GetMapping
-    public ResponseEntity getAll(@PageableDefault(page = 0, size = 30) @RequestParam("page") int page, @RequestParam("size") int size) {
+    public ResponseEntity getAll(@PageableDefault(page = 0, size = 30) @RequestParam(value = "page", required = false) int page, @RequestParam(value = "size", required = false) int size) {
         try {
 
 
@@ -43,8 +44,25 @@ public class SaleController {
     }
 
     @ResponseBody
+    @PostMapping
+    public ResponseEntity save(@RequestBody Sale sale) {
+        try {
+
+
+             sale = saleService.save(sale);
+
+            return ResponseEntity.created(new URI("/api/sales/"+sale.getCode())).body(sale);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error: " + e);
+            return new ResponseEntity(e, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    @ResponseBody
     @GetMapping("/{code}")
-    public ResponseEntity getByCode(@PathParam("code") Long code) {
+    public ResponseEntity getByCode(@PathVariable("code") Long code) {
         try {
 
             var sale = saleService.findByCode(code);
@@ -68,9 +86,8 @@ public class SaleController {
     @GetMapping("/generate")
     public ResponseEntity generate() {
 
-        for (var i = 0; i < 5000; i++) {
+        for (var i = 0; i < 500; i++) {
             Sale sale = new Sale();
-
 
             List<SaleItem> itens = new ArrayList<SaleItem>();
 

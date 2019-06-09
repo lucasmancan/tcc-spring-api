@@ -1,6 +1,8 @@
 package br.com.lucasmancan.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -15,6 +17,8 @@ import java.util.List;
 @ToString(callSuper=false, exclude = {"account", "items", "appUser"})
 @AllArgsConstructor
 @NoArgsConstructor
+@Cacheable
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE )
 public class Sale  implements Serializable{
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -28,6 +32,8 @@ public class Sale  implements Serializable{
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn( name ="account_id")
 	private Account account;
+
+	@JsonIgnoreProperties(value = {"sale"})
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SaleItem> items;
 	
@@ -37,6 +43,7 @@ public class Sale  implements Serializable{
 	@Column(name = "state", length = 3)
 	private SaleState state;
     @ManyToOne(fetch = FetchType.LAZY)
+
     @JoinColumn(name = "update_user_id")
     private AppUser updatedUser;
 

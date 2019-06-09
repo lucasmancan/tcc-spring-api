@@ -6,6 +6,7 @@ import br.com.lucasmancan.models.Sale;
 import br.com.lucasmancan.models.SaleItem;
 import br.com.lucasmancan.repositories.SaleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -97,21 +98,25 @@ public class SaleService extends AbstractService<Sale> {
 		repository.delete(entity);
 	}
 
+	@Cacheable(value = "salesCache")
 	public Page<SaleDTO> findAll(Pageable pageable) {
 		return repository.findAll(getLoggedAccount().getId(), pageable);
 	}
 
 	@Override
+	@Cacheable(value = "salesCache")
 	public List findAll() {
 		return repository.findAll();
 	}
 
 	@Override
+	@Cacheable(value = "salesCache", key = "#id")
 	public Sale findById(Long id) throws AppNotFoundException {
 		return repository.findById(id).orElseThrow(() -> new AppNotFoundException());
 	}
 
 	@Override
+	@Cacheable(value = "salesCache", key = "#code")
 	public Sale findByCode(Long code) throws AppNotFoundException {
 		return repository.findByCode(getLoggedAccount().getId(), code).orElseThrow(() -> new AppNotFoundException());
 	}

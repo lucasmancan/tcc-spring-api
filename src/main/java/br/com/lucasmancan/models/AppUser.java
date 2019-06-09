@@ -1,5 +1,6 @@
 package br.com.lucasmancan.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -50,7 +51,7 @@ public class AppUser implements Serializable, UserDetails, Authentication {
 	@Column(name = "document", length = 14)
 	private String document;
 
-    //	@JsonIgnore
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
 	@Column(name = "username")
@@ -99,6 +100,7 @@ public class AppUser implements Serializable, UserDetails, Authentication {
 	private Date loggedAt;
 
     @Override
+	@Transient
     public Collection<GrantedAuthority> getAuthorities() {
         // TODO Auto-generated method stub
         var adminList = AuthorityUtils.createAuthorityList("ROLE_ADMIN", "ROLE_USER");

@@ -1,0 +1,37 @@
+
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ehcache.xsd" updateCheck="true" monitoring="autodetect" dynamicConfig="true">
+
+    <diskStore path="java.io.tmpdir"/>
+
+<!--    <transactionManagerLookup class="net.sf.ehcache.transaction.manager.DefaultTransactionManagerLookup" properties="jndiName=java:/TransactionManager" propertySeparator=";"/>-->
+
+<!--    <cacheManagerEventListenerFactory class="" properties=""/>-->
+<!--    <terracottaConfig url="localhost:9510"/>-->
+
+<!--    <defaultCache maxEntriesLocalHeap="5000" eternal="false" timeToIdleSeconds="1200" timeToLiveSeconds="1200">-->
+<!--&lt;!&ndash;        <terracotta/>&ndash;&gt;-->
+<!--    </defaultCache>-->
+<!--    <cache name="sampleCache1" maxEntriesLocalHeap="10000" maxEntriesLocalDisk="1000" eternal="false" diskSpoolBufferSizeMB="20" timeToIdleSeconds="300" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LFU" transactionalMode="off">-->
+<!--        <persistence strategy="localTempSwap"/>-->
+<!--    </cache>-->
+    <defaultCache
+            maxEntriesLocalHeap="10000"
+            eternal="false"
+            timeToIdleSeconds="120"
+            timeToLiveSeconds="120"
+            maxEntriesLocalDisk="10000000"
+            diskExpiryThreadIntervalSeconds="120"
+            memoryStoreEvictionPolicy="LRU" />
+
+    <cache name="salesCache" maxEntriesLocalHeap="10000" eternal="true" memoryStoreEvictionPolicy="FIFO"/>
+    <cache name="productsCache" maxEntriesLocalHeap="10000" eternal="true" memoryStoreEvictionPolicy="FIFO"/>
+    <cache name="clientsCache" maxEntriesLocalHeap="10000" eternal="true" memoryStoreEvictionPolicy="FIFO"/>
+    <cache name="userCache" maxEntriesLocalHeap="10000" eternal="true" memoryStoreEvictionPolicy="FIFO"/>
+
+
+    <!--    <cache name="sampleCache3" maxEntriesLocalHeap="500" eternal="false" overflowToDisk="true" diskPersistent="true" timeToIdleSeconds="300" timeToLiveSeconds="600" diskExpiryThreadIntervalSeconds="1" memoryStoreEvictionPolicy="LFU"> </cache>-->
+
+<!--    <cache name="sampleTerracottaCache" maxBytesLocalHeap="10m" eternal="false" timeToIdleSeconds="3600" timeToLiveSeconds="1800">-->
+<!--        <terracotta/>-->
+<!--    </cache>-->
+</ehcache>
