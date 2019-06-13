@@ -41,11 +41,12 @@ public class SaleItem  implements Serializable{
 	
 	private BigDecimal discount;
 
-	@Column(name="total_gross")
-	private BigDecimal totalGross;
-	
-	@Column(name="total_liquid")
-	private BigDecimal totalLiquid;
+
+	@Column(name = "gross_amount")
+	private BigDecimal grossAmount;
+
+	@Column(name = "amount")
+	private BigDecimal amount;
 		
 	@Column(name="created_at")
 	@Temporal(TemporalType.TIMESTAMP)

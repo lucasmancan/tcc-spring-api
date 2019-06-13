@@ -5,6 +5,7 @@ import br.com.lucasmancan.models.AppUser;
 import br.com.lucasmancan.repositories.AccountRepository;
 import br.com.lucasmancan.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 public abstract class AbstractService<T> implements AppService<T> {

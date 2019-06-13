@@ -3,6 +3,7 @@ package br.com.lucasmancan.controllers;
 import br.com.lucasmancan.exceptions.AppNotFoundException;
 import br.com.lucasmancan.models.Client;
 import br.com.lucasmancan.services.ClientService;
+import br.com.lucasmancan.utils.AppPaginator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableDefault;
@@ -22,10 +23,10 @@ public class ClientController {
 
     @ResponseBody
     @GetMapping
-    public ResponseEntity getAll(@PageableDefault(page = 0, size = 1) @RequestBody PageRequest pageable) {
+    public ResponseEntity getAll(@PageableDefault(page = 0, size = 30) @RequestParam("page") int page, @RequestParam("size") int size) {
         try {
 
-            var products = clientService.findAll(pageable);
+            var products = clientService.findAll(new AppPaginator(page, size));
 
             return ResponseEntity.ok(products);
         } catch (Exception e) {
@@ -36,7 +37,7 @@ public class ClientController {
 
     @ResponseBody
     @GetMapping("/{code}")
-    public ResponseEntity getByCode(@PathParam("code") Long code) {
+    public ResponseEntity getByCode(@PathVariable("code") Long code) {
         try {
 
             var product = clientService.findByCode(code);

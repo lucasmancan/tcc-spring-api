@@ -5,6 +5,7 @@ import br.com.lucasmancan.exceptions.AppNotFoundException;
 import br.com.lucasmancan.models.Product;
 import br.com.lucasmancan.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,7 @@ public class ProductService extends AbstractService<Product> {
 //        return repository.findAll(pageable);
 //	}
 
+	@Cacheable(value = "productsCache")
 	public Page<ProductDTO> findAll(Pageable pageable) {
 		return repository.findAll(getLoggedAccount().getId(), pageable);
 	}
@@ -52,10 +54,13 @@ public class ProductService extends AbstractService<Product> {
 	}
 
 	@Override
+//	@Cacheable(
+//			value = "productCache",
+//			key = "#code")
 	public Product findByCode(Long code) throws AppNotFoundException {
 		return repository.findByCode(getLoggedAccount().getId(), code).orElseThrow(() -> new AppNotFoundException());
 	}
-
+	@Cacheable(value = "productsCache")
 	public List<Product> findAll() {
 		return repository.findAll();
 	}
