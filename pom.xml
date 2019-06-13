@@ -20,6 +20,13 @@
 	</properties>
 
 	<dependencies>
+		<!-- https://mvnrepository.com/artifact/br.com.uol.pagseguro/pagseguro-api -->
+		<dependency>
+			<groupId>br.com.uol.pagseguro</groupId>
+			<artifactId>pagseguro-api</artifactId>
+			<version>4.3.2</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-core -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
