@@ -22,8 +22,8 @@ public class SaleDTO implements Serializable {
     private Sale.SaleState state;
     private BigDecimal otherExpenses;
     private BigDecimal discount;
-    private BigDecimal totalGross;
-    private BigDecimal totalLiquid;
+    private BigDecimal grossAmount;
+    private BigDecimal amount;
     private Date createdAt;
     private Date updatedAt;
 
@@ -33,8 +33,8 @@ public class SaleDTO implements Serializable {
         this.updatedAt = sale.getUpdatedAt();
         this.discount = sale.getDiscount();
         this.otherExpenses = sale.getOtherExpenses();
-        this.totalGross = sale.getTotalGross();
-        this.totalLiquid = sale.getTotalLiquid();
+        this.grossAmount = sale.getGrossAmount();
+        this.amount = sale.getAmount();
         this.state = sale.getState();
     }
 }

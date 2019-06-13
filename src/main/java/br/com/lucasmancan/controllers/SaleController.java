@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.websocket.server.PathParam;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.ArrayList;
@@ -28,11 +27,16 @@ public class SaleController {
 
     @ResponseBody
     @GetMapping
-    public ResponseEntity getAll(@PageableDefault(page = 0, size = 30) @RequestParam(value = "page", required = false) int page, @RequestParam(value = "size", required = false) int size) {
+    public ResponseEntity getAll(@PageableDefault(page = 0, size = 30) @RequestParam(value = "page", required = false) Integer page,
+                                 @RequestParam(value = "size", required = false) Integer size,
+                                 @RequestParam(value = "status", required = false) String status,
+                                 @RequestParam(value = "customerName", required = false) String customerName,
+                                 @RequestParam(value = "upper", required = false) BigDecimal upper,
+                                 @RequestParam(value = "lower", required = false) BigDecimal lower) {
         try {
 
 
-            var sales = saleService.findAll(new AppPaginator(page, size));
+            var sales = saleService.findAll(new AppPaginator(page, size), status, customerName, upper, lower);
 
             return ResponseEntity.ok(sales);
         } catch (Exception e) {
@@ -49,9 +53,9 @@ public class SaleController {
         try {
 
 
-             sale = saleService.save(sale);
+            sale = saleService.save(sale);
 
-            return ResponseEntity.created(new URI("/api/sales/"+sale.getCode())).body(sale);
+            return ResponseEntity.created(new URI("/api/sales/" + sale.getCode())).body(sale);
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Error: " + e);

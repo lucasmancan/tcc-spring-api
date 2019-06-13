@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -74,9 +73,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 				.setIssuer(SecurityConstants.TOKEN_ISSUER)
 				.setAudience(SecurityConstants.TOKEN_AUDIENCE)
 				.setSubject(user.getUsername())
-				.setExpiration(new Date(System.currentTimeMillis() + 864000000L))
+//				.setExpiration(new Date(System.currentTimeMillis() + 864000000L))
 				.claim("roles", roles)
 				.compact();
+
 
 		response.addHeader(SecurityConstants.TOKEN_HEADER, SecurityConstants.TOKEN_PREFIX + token);
 	}
