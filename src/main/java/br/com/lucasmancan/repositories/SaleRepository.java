@@ -22,7 +22,7 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
 			"WHERE p.account.id =:accountId and " +
 			"(:status is null or p.state =:status) and " +
 			"(:customerName is null or p.employee.name =:customerName) and " +
-			"((:minAmount is null or p.amount >=:minAmount) and (:maxAmount is null or p.amount <=:maxAmount))", countQuery = "select s from Sale s")
+            "((:minAmount is null or p.amount >=:minAmount) and (:maxAmount is null or p.amount <=:maxAmount))", countQuery = "select COUNT(s) from Sale s")
 	Page<SaleDTO> findAll(@Param("accountId") Long accountId, Pageable pageable, String status, String customerName, BigDecimal minAmount, BigDecimal maxAmount);
 
 	@Query(value = "SELECT p FROM Sale p WHERE p.account.id =:accountId")

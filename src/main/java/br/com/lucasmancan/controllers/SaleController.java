@@ -25,18 +25,36 @@ public class SaleController {
     @Autowired
     private SaleService saleService;
 
+    //    @ResponseBody
+//    @GetMapping
+//    public ResponseEntity getAll(@PageableDefault(page = 0, size = 30) @RequestParam(value = "page", required = false) Integer page,
+//                                 @RequestParam(value = "size", required = false) Integer size,
+//                                 @RequestParam(value = "status", required = false) String status,
+//                                 @RequestParam(value = "customerName", required = false) String customerName,
+//                                 @RequestParam(value = "upper", required = false) BigDecimal upper,
+//                                 @RequestParam(value = "lower", required = false) BigDecimal lower) {
+//        try {
+//
+//
+//            var sales = saleService.findAll(new AppPaginator(page, size), status, customerName, upper, lower);
+//
+//            return ResponseEntity.ok(sales);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            System.out.println("Error: " + e);
+//            return new ResponseEntity(e, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//
+//    }
+//
     @ResponseBody
     @GetMapping
     public ResponseEntity getAll(@PageableDefault(page = 0, size = 30) @RequestParam(value = "page", required = false) Integer page,
-                                 @RequestParam(value = "size", required = false) Integer size,
-                                 @RequestParam(value = "status", required = false) String status,
-                                 @RequestParam(value = "customerName", required = false) String customerName,
-                                 @RequestParam(value = "upper", required = false) BigDecimal upper,
-                                 @RequestParam(value = "lower", required = false) BigDecimal lower) {
+                                 @RequestParam(value = "size", required = false) Integer size
+    ) {
         try {
 
-
-            var sales = saleService.findAll(new AppPaginator(page, size), status, customerName, upper, lower);
+            var sales = saleService.findAll(new AppPaginator(page, size));
 
             return ResponseEntity.ok(sales);
         } catch (Exception e) {
