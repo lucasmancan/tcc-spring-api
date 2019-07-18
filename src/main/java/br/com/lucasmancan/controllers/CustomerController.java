@@ -29,7 +29,7 @@ public class CustomerController {
     @ResponseBody
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
-    public CustomerDTO save(@Valid @RequestBody CustomerDTO customerDTO) {
+    public CustomerDTO save(@Valid @RequestBody CustomerDTO customerDTO) throws AppNotFoundException {
         return customerService.save(customerDTO);
     }
 

@@ -16,12 +16,10 @@ public class ArticleService extends AbstractService<Article> {
 	@Autowired
 	private ArticleRepository repository;
 
-	@Override
 	public Article save(Article entity) {
 		return repository.save(entity);
 	}
 
-	@Override
 	public void remove(Article entity) {
 		repository.delete(entity);
 	}
@@ -30,18 +28,13 @@ public class ArticleService extends AbstractService<Article> {
         return repository.findAll(pageable);
     }
 
-    ;
-
-	@Override
     public Article findByCode(Long code) throws AppNotFoundException {
 		return repository.findById(code).orElseThrow(() -> new AppNotFoundException());
 	}
 
-	@Override
 	public Article findById(Long id) throws AppNotFoundException {
 		return repository.findById(id).orElseThrow(() -> new AppNotFoundException());
 	}
-
 
     public List<Article> findAll() {
 		return repository.findAll();

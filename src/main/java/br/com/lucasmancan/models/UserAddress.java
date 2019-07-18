@@ -1,46 +1,52 @@
 package br.com.lucasmancan.models;
 
+import lombok.*;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @Data
 @Entity
 @Table(name="users_addresses")
 @EqualsAndHashCode(callSuper=false, exclude = {"appUser", "address"})
-@ToString(callSuper=false, exclude = {"appUser", "address"})
+@ToString(exclude = {"appUser", "address"})
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserAddress implements Serializable{
 
-	@EmbeddedId
-	private UserAddressPK id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Integer id;
 	
 	@MapsId("userId")
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn( name ="user_id")
 	private AppUser appUser;
 
-	@MapsId("addressId")
+	@Column(name = "street")
+	private String street;
+
+	@Column(name = "number")
+	private String number;
+
+	@Column(name = "zip_code", length = 10)
+	private Integer zipCode;
+
+	@Column(name = "city", length = 255)
+	private String city;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "type", length = 3)
+	private ContactType type;
+
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn( name ="address_id")
-	private Address address;
+	@JoinColumn(name = "state_id", referencedColumnName = "id")
+	private String state;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "country_id")
+	private String country;
 	
 	@Column(name="created_at")
 	@Temporal(TemporalType.TIMESTAMP)

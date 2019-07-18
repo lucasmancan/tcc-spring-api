@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -24,6 +25,12 @@ public class AppUserDTO {
     private String coverImage;
 
     private PersonType type;
+
+    private List<EmailDTO> emails;
+
+    private List<PhoneDTO> phones;
+
+    private List<AddressDTO> addresses;
 
     @NotNull
     private String document;

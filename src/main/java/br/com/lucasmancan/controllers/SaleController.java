@@ -11,6 +11,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.math.BigDecimal;
 
 @RestController
@@ -38,7 +39,7 @@ public class SaleController {
     @ResponseBody
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
-    public SaleDTO save(@RequestBody SaleDTO saleDTO) {
+    public SaleDTO save(@Valid @RequestBody SaleDTO saleDTO) {
         return saleService.save(saleDTO);
     }
 
@@ -51,7 +52,7 @@ public class SaleController {
     @ResponseBody
     @PutMapping("/{code}")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public SaleDTO update(@PathVariable("code") Long code, @RequestBody SaleDTO saleDTO) throws AppNotFoundException {
+    public SaleDTO update(@PathVariable("code") Long code, @Valid @RequestBody SaleDTO saleDTO) throws AppNotFoundException {
         return saleService.update(code, saleDTO);
     }
 }

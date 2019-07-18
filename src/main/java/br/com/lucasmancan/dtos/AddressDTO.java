@@ -35,7 +35,6 @@ public class AddressDTO {
     @NotNull
     private String country;
 
-
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
     private LocalDateTime updatedAt;
 }

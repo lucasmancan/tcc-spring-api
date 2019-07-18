@@ -17,15 +17,12 @@ public class ProductCategoryService extends AbstractService<ProductCategory> {
     @Autowired
     private ProductCategoryRepository repository;
 
-    @Override
     public ProductCategory save(ProductCategory entity) {
-
 
         if (entity.getCode() == null) {
             entity.setCreatedAt(new Date());
             entity.setAccount(getLoggedAccount());
         }
-
 
         entity.setUpdatedAt(new Date());
         entity.setCreationAppUser(getPrincipal());
@@ -33,7 +30,6 @@ public class ProductCategoryService extends AbstractService<ProductCategory> {
         return repository.save(entity);
     }
 
-    @Override
     public void remove(ProductCategory entity) {
         repository.delete(entity);
     }
@@ -42,14 +38,12 @@ public class ProductCategoryService extends AbstractService<ProductCategory> {
         return repository.findAll(pageable);
     }
 
-    @Override
     public ProductCategory findById(Long id) throws AppNotFoundException {
         return repository.findById(id).orElseThrow(() -> new AppNotFoundException());
     }
 
-    @Override
     public ProductCategory findByCode(Long code) throws AppNotFoundException {
-        return repository.findByCode(getLoggedAccount().getId(), code).orElseThrow(() -> new AppNotFoundException());
+        return repository.findByCode(getLoggedAccount().getId(), code).orElseThrow(AppNotFoundException::new);
     }
 
     public List<ProductCategory> findAll() {

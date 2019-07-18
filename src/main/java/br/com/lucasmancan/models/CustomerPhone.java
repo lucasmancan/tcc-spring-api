@@ -8,26 +8,33 @@ import java.util.Date;
 
 @Data
 @Entity
-@Table(name="clients_phones")
-@EqualsAndHashCode(callSuper=false, exclude = {"client", "phone", "creationAppUser"})
-@ToString(callSuper=false, exclude = {"client", "phone","creationAppUser"})
+@Table(name = "customers_phones")
+@EqualsAndHashCode(callSuper = false, exclude = {"customer", "creationAppUser"})
+@ToString(callSuper = false, exclude = {"customer", "creationAppUser"})
 @AllArgsConstructor
 @NoArgsConstructor
 public class CustomerPhone implements Serializable {
 
 	@Id
-	@EmbeddedId
-    private CustomerPhonePK id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer id;
 	
-	@MapsId("clientId")
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn( name ="client_id")
-    private Customer client;
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
 
-	@MapsId("phoneId")
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn( name ="phone_id")
-	private Phone phone;
+    @Column(name = "area_code")
+    private String areaCode;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", length = 3)
+    private ContactType type;
+
+    @Column(name = "country_code")
+    private String countryCode;
+
+    @Column(name = "phone_number")
+    private String phoneNumber;
 	
 	@Column(name="created_at")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -36,7 +43,6 @@ public class CustomerPhone implements Serializable {
 	@Column(name="updated_at")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date updatedAt;
-	
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn( name ="creation_user_id")

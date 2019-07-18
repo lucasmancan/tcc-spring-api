@@ -1,16 +1,18 @@
 package br.com.lucasmancan.repositories;
 
-import br.com.lucasmancan.models.Address;
-import br.com.lucasmancan.models.Client;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface AddressRepository extends JpaRepository<Address, Long> {
 
+
+    @Query("SELECT a FROM Address a " +
+            "where a.zipCode =:zipCode " +
+            "and a.number =:number " +
+            "and a.street like :street")
+    Optional<Address> findByZipCodeAndStreetAndNumber(Integer zipCode, String street, Integer number);
 }

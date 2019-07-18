@@ -1,6 +1,5 @@
 package br.com.lucasmancan.models;
 
-import ch.qos.logback.core.net.server.Client;
 import lombok.*;
 
 import javax.persistence.*;
@@ -9,25 +8,42 @@ import java.util.Date;
 
 @Data
 @Entity
-@Table(name="clients_addresses")
-@EqualsAndHashCode(callSuper=false, exclude = {"client", "address", "creationAppUser"})
-@ToString(callSuper=false, exclude = {"client", "address", "creationAppUser"})
+@Table(name = "customers_addresses")
+@EqualsAndHashCode(callSuper = false, exclude = {"customer", "creationAppUser"})
+@ToString(callSuper = false, exclude = {"customer", "creationAppUser"})
 @AllArgsConstructor
 @NoArgsConstructor
 public class CustomerAddress implements Serializable {
 
-	@EmbeddedId
-    private CustomerAddressPK id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer id;
 	
-	@MapsId("clientId")
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn( name ="client_id", nullable = false, referencedColumnName = "id")
-	private Client client;
+    @JoinColumn(name = "customer_id", nullable = false, referencedColumnName = "id")
+    private Customer customer;
 
-	@MapsId("addressId")
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name ="address_id", nullable = false, referencedColumnName = "id")
-	private Address address;
+    @Column(name = "street")
+    private String street;
+
+    @Column(name = "number")
+    private String number;
+
+    @Column(name = "zip_code", length = 10)
+    private Integer zipCode;
+
+    @Column(name = "city", length = 255)
+    private String city;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", length = 3)
+    private ContactType type;
+
+    @Column(name = "state")
+    private String state;
+
+    @Column(name = "country")
+    private String country;
 	
 	@Column(name="created_at")
 	@Temporal(TemporalType.TIMESTAMP)

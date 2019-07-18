@@ -38,13 +38,13 @@ public class Customer implements Serializable {
 	
 	private Boolean active;
 
-	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "client")
+	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "customer")
     private Set<CustomerEmail> emails = new HashSet<>();
 
-	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "client")
+	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "customer")
     private Set<CustomerPhone> phones = new HashSet<>();
-	
-	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "client")
+
+	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "customer")
     private Set<CustomerAddress> addresses = new HashSet<>();
 	
 	@Column(name="created_at")

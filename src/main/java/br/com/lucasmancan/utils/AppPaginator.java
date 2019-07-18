@@ -35,7 +35,6 @@ public class AppPaginator implements Pageable {
 
     @Override
     public Sort getSort() {
-
         var sort = new Sort(new Sort.Order[0]);
         return sort;
     }

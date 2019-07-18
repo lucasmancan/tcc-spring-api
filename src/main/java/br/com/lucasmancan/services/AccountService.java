@@ -16,33 +16,28 @@ public class AccountService extends AbstractService<Account> {
     @Autowired
     private AccountRepository repository;
 
-    @Override
     public Account save(Account entity) {
         return repository.save(entity);
     }
 
-    @Override
     public void remove(Account entity) {
         repository.delete(entity);
     }
 
-    @Override
     public Account findByCode(Long code) throws AppNotFoundException {
-        return repository.findById(code).orElseThrow(() -> new AppNotFoundException());
+        return repository.findById(code).orElseThrow(AppNotFoundException::new);
     }
 
     public Page<Account> findAll(Pageable pageable) {
         return repository.findAll(pageable);
     }
 
-    @Override
     public List findAll() {
         return repository.findAll();
     }
 
-    @Override
     public Account findById(Long id) throws AppNotFoundException {
-        return repository.findById(id).orElseThrow(() -> new AppNotFoundException());
+        return repository.findById(id).orElseThrow(AppNotFoundException::new);
     }
 
 }
