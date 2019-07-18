@@ -1,24 +1,11 @@
 package br.com.lucasmancan.models;
 
+import ch.qos.logback.core.net.server.Client;
+import lombok.*;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @Data
 @Entity
@@ -27,10 +14,10 @@ import lombok.ToString;
 @ToString(callSuper=false, exclude = {"client", "address", "creationAppUser"})
 @AllArgsConstructor
 @NoArgsConstructor
-public class ClientAddress implements Serializable{
+public class CustomerAddress implements Serializable {
 
 	@EmbeddedId
-	private ClientAddressPK id;
+    private CustomerAddressPK id;
 	
 	@MapsId("clientId")
 	@ManyToOne(fetch = FetchType.LAZY)

@@ -1,6 +1,5 @@
 package br.com.lucasmancan.dtos;
 
-import br.com.lucasmancan.models.Product;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,7 +12,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductDTO implements Serializable {
+public class ProductCategoryDTO implements Serializable {
 
     private Long code;
 
@@ -25,14 +24,4 @@ public class ProductDTO implements Serializable {
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
     private LocalDateTime updatedAt;
-
-    @NotNull
-    private ProductCategoryDTO category;
-
-    public ProductDTO(Product product) {
-        this.code = product.getCode();
-        this.updatedAt = product.getUpdatedAt();
-        this.name = product.getName();
-        this.description = product.getDescription();
-    }
 }

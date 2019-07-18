@@ -28,13 +28,8 @@ public class AppUserAuthentication implements Authentication {
         this.email = appUser.getUsername();
         this.password = appUser.getPassword();
         this.authorities = appUser.getAuthorities();
-
-//        appUser.setEmails(null);
-//        appUser.setPhones(null);
-
         this.appUser = appUser;
         this.account = appUser.getAccount();
-
     }
 
     @Override

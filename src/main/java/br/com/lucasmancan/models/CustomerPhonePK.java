@@ -1,23 +1,19 @@
 package br.com.lucasmancan.models;
 
-import java.io.Serializable;
-
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import java.io.Serializable;
 
 
 @Embeddable
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ClientPhonePK implements Serializable{
+public class CustomerPhonePK implements Serializable {
 
 	@Column( name ="client_id")
 	private Long clientId;

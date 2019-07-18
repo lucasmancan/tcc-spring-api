@@ -1,18 +1,19 @@
 package br.com.lucasmancan.controllers;
 
+import br.com.lucasmancan.dtos.ProductDTO;
 import br.com.lucasmancan.exceptions.AppNotFoundException;
 import br.com.lucasmancan.models.Product;
 import br.com.lucasmancan.models.ProductCategory;
 import br.com.lucasmancan.services.ProductCategoryService;
 import br.com.lucasmancan.services.ProductService;
 import br.com.lucasmancan.utils.AppPaginator;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.websocket.server.PathParam;
 import java.util.Date;
 
 @RestController
@@ -23,41 +24,25 @@ public class ProductController {
     private ProductService productService;
 
     @Autowired
+    private ModelMapper mapper;
+
+    @Autowired
     private ProductCategoryService productCategoryService;
 
     @ResponseBody
     @GetMapping
-    public ResponseEntity getAll(@PageableDefault(page = 0, size = 30) @RequestParam("page") int page, @RequestParam("size") int size) {
-        try {
-
-            var products = productService.findAll(new AppPaginator(page, size));
-
-            return ResponseEntity.ok(products);
-        } catch (Exception e) {
-            return new ResponseEntity(e, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
+    public Page<ProductDTO> getAll(@PageableDefault(page = 0, size = 30) @RequestParam("page") int page, @RequestParam("size") int size) {
+        return productService.findAll(new AppPaginator(page, size));
     }
 
     @ResponseBody
     @GetMapping("/{code}")
-    public ResponseEntity getByCode(@PathVariable("code") Long code) {
-        try {
-
-            var product = productService.findByCode(code);
-
-            return ResponseEntity.ok(product);
-
-        } catch (AppNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return new ResponseEntity(e, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ProductDTO getByCode(@PathVariable("code") Long code) throws AppNotFoundException {
+        return mapper.map(productService.findByCode(code), ProductDTO.class);
     }
 
     @GetMapping("/generate")
     public ResponseEntity generate() {
-
 
         ProductCategory category = new ProductCategory();
         category.setName("Categoria teste " + new Date().getTime());

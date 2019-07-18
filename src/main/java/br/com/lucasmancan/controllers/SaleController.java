@@ -1,22 +1,17 @@
 package br.com.lucasmancan.controllers;
 
+import br.com.lucasmancan.dtos.SaleDTO;
 import br.com.lucasmancan.exceptions.AppNotFoundException;
-import br.com.lucasmancan.models.AppUser;
-import br.com.lucasmancan.models.Sale;
-import br.com.lucasmancan.models.SaleItem;
 import br.com.lucasmancan.services.SaleService;
 import br.com.lucasmancan.utils.AppPaginator;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/sales")
@@ -25,96 +20,38 @@ public class SaleController {
     @Autowired
     private SaleService saleService;
 
+    @Autowired
+    private ModelMapper mapper;
+
     @ResponseBody
     @GetMapping
-    public ResponseEntity getAll(@PageableDefault(page = 0, size = 30) @RequestParam(value = "page", required = false) Integer page,
-                                 @RequestParam(value = "size", required = false) Integer size,
-                                 @RequestParam(value = "status", required = false) String status,
-                                 @RequestParam(value = "customerName", required = false) String customerName,
-                                 @RequestParam(value = "upper", required = false) BigDecimal upper,
-                                 @RequestParam(value = "lower", required = false) BigDecimal lower) {
-        try {
+    public Page<SaleDTO> getAll(@PageableDefault(page = 0, size = 30) @RequestParam(value = "page", required = false) Integer page,
+                                @RequestParam(value = "size", required = false) Integer size,
+                                @RequestParam(value = "status", required = false) String status,
+                                @RequestParam(value = "customerName", required = false) String customerName,
+                                @RequestParam(value = "upper", required = false) BigDecimal upper,
+                                @RequestParam(value = "lower", required = false) BigDecimal lower) {
 
-
-            var sales = saleService.findAll(new AppPaginator(page, size), status, customerName, upper, lower);
-
-            return ResponseEntity.ok(sales);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Error: " + e);
-            return new ResponseEntity(e, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
+        return this.saleService.findAll(new AppPaginator(page, size), status, customerName, upper, lower);
     }
 
     @ResponseBody
     @PostMapping
-    public ResponseEntity save(@RequestBody Sale sale) {
-        try {
-
-
-            sale = saleService.save(sale);
-
-            return ResponseEntity.created(new URI("/api/sales/" + sale.getCode())).body(sale);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Error: " + e);
-            return new ResponseEntity(e, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
+    @ResponseStatus(code = HttpStatus.CREATED)
+    public SaleDTO save(@RequestBody SaleDTO saleDTO) {
+        return saleService.save(saleDTO);
     }
 
     @ResponseBody
     @GetMapping("/{code}")
-    public ResponseEntity getByCode(@PathVariable("code") Long code) {
-        try {
-
-            var sale = saleService.findByCode(code);
-
-            return ResponseEntity.ok(sale);
-
-        } catch (AppNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return new ResponseEntity(e, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public SaleDTO getByCode(@PathVariable("code") Long code) throws AppNotFoundException {
+        return saleService.findByCode(code);
     }
 
-    @GetMapping("/me")
-    public ResponseEntity home() {
-        AppUser principal = (AppUser) SecurityContextHolder.getContext().getAuthentication();
-        return new ResponseEntity(principal, HttpStatus.OK);
-    }
-
-
-    @GetMapping("/generate")
-    public ResponseEntity generate() {
-
-        for (var i = 0; i < 500; i++) {
-            Sale sale = new Sale();
-
-            List<SaleItem> itens = new ArrayList<SaleItem>();
-
-            for (var j = 0; j < 10; j++) {
-                SaleItem item = new SaleItem();
-
-                item.setUnitary(new BigDecimal(Math.random() * 1000));
-                item.setOtherExpenses(new BigDecimal(Math.random() * 100));
-                item.setQuantity((int) Math.random() * 100);
-                item.setDiscount(new BigDecimal(Math.random() * 500));
-                item.setSale(sale);
-
-                itens.add(item);
-            }
-
-
-            sale.setItems(new ArrayList<>());
-
-            sale.getItems().addAll(itens);
-            saleService.save(sale);
-
-        }
-
-        return ResponseEntity.ok().build();
+    @ResponseBody
+    @PutMapping("/{code}")
+    @ResponseStatus(code = HttpStatus.CREATED)
+    public SaleDTO update(@PathVariable("code") Long code, @RequestBody SaleDTO saleDTO) throws AppNotFoundException {
+        return saleService.update(code, saleDTO);
     }
 }

@@ -1,6 +1,6 @@
 package br.com.lucasmancan.dtos;
 
-import br.com.lucasmancan.models.Product;
+import br.com.lucasmancan.models.PersonType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,30 +9,29 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductDTO implements Serializable {
-
+public class CustomerDTO implements Serializable {
+    @NotNull
+    private String name;
     private Long code;
 
     @NotNull
-    private String name;
-
-    @NotNull
-    private String description;
+    private PersonType type;
+    private String document;
+    private Boolean active;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
     private LocalDateTime updatedAt;
 
-    @NotNull
-    private ProductCategoryDTO category;
+    private List<EmailDTO> emails;
 
-    public ProductDTO(Product product) {
-        this.code = product.getCode();
-        this.updatedAt = product.getUpdatedAt();
-        this.name = product.getName();
-        this.description = product.getDescription();
-    }
+    private List<PhoneDTO> phones;
+
+    private List<AddressDTO> addresses;
+
 }
+

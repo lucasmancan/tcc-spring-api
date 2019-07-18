@@ -10,12 +10,12 @@ import java.util.Set;
 
 @Data
 @Entity
-@Table(name="clients")
+@Table(name = "customers")
 @EqualsAndHashCode(callSuper=false, exclude = {"emails", "phones", "addresses", "account"})
 @ToString(callSuper=false, exclude = {"emails", "phones", "addresses", "account"})
 @AllArgsConstructor
 @NoArgsConstructor
-public class Client implements Serializable {
+public class Customer implements Serializable {
 
 	@Id
 	@GeneratedValue( strategy = GenerationType.AUTO)
@@ -39,13 +39,13 @@ public class Client implements Serializable {
 	private Boolean active;
 
 	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "client")
-	private Set<ClientEmail> emails = new HashSet<>();
+    private Set<CustomerEmail> emails = new HashSet<>();
 
 	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "client")
-	private Set<ClientPhone> phones = new HashSet<>();
+    private Set<CustomerPhone> phones = new HashSet<>();
 	
 	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "client")
-	private Set<ClientAddress> addresses = new HashSet<>();
+    private Set<CustomerAddress> addresses = new HashSet<>();
 	
 	@Column(name="created_at")
 	@Temporal(TemporalType.TIMESTAMP)

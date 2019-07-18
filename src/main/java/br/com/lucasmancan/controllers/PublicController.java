@@ -19,10 +19,8 @@ import java.util.Date;
 @RequestMapping("/api/public")
 public class PublicController {
 
-
     @Autowired
     private UserRepository repository;
-
 
     @Autowired
     private AccountRepository accountRepository;
