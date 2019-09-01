@@ -17,8 +17,8 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "users")
-@EqualsAndHashCode(callSuper = false, exclude = {"account", "mainAddress", "mainPhone"})
-@ToString(callSuper = false, exclude = {"account", "mainAddress", "mainPhone"})
+@EqualsAndHashCode(callSuper = false, exclude = {"account", "emails", "phones", "addresses", "account"})
+@ToString(callSuper = false, exclude = {"account", "emails", "phones", "addresses", "account"})
 @AllArgsConstructor
 @NoArgsConstructor
 public class AppUser implements Serializable, UserDetails, Authentication {
@@ -170,4 +170,8 @@ public class AppUser implements Serializable, UserDetails, Authentication {
 		return this.admin;
 	}
 
+    @Override
+    public String getName() {
+        return this.username;
+    }
 }

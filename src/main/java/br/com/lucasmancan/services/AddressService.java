@@ -4,7 +4,6 @@ import br.com.lucasmancan.br.com.viaCep.model.Proxy;
 import br.com.lucasmancan.br.com.viaCep.model.ViaCep;
 import br.com.lucasmancan.exceptions.WebRequestException;
 import br.com.lucasmancan.models.Address;
-import br.com.lucasmancan.repositories.AddressRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -12,8 +11,6 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class AddressService implements Proxy {
 
-    @Autowired
-    private AddressRepository repository;
 
     @Autowired
     private RestTemplate restTemplate;

@@ -9,8 +9,8 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name="users_addresses")
-@EqualsAndHashCode(callSuper=false, exclude = {"appUser", "address"})
-@ToString(exclude = {"appUser", "address"})
+@EqualsAndHashCode(callSuper = false, exclude = {"appUser"})
+@ToString(exclude = {"appUser"})
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserAddress implements Serializable{
@@ -40,12 +40,9 @@ public class UserAddress implements Serializable{
 	@Column(name = "type", length = 3)
 	private ContactType type;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "state_id", referencedColumnName = "id")
-	private String state;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "country_id")
+    private String state;
+
 	private String country;
 	
 	@Column(name="created_at")

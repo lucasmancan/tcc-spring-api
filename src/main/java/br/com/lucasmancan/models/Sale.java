@@ -35,7 +35,7 @@ public class Sale implements Serializable {
     private Account account;
 
     @JsonIgnoreProperties(value = {"sale"})
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "sale", fetch = FetchType.LAZY)
     private Set<SaleItem> items = new HashSet<SaleItem>();
 
     private Long code;
@@ -49,15 +49,15 @@ public class Sale implements Serializable {
     private AppUser updatedUser;
 
     @Column(name = "other_expenses")
-    private BigDecimal otherExpenses;
+    private BigDecimal otherExpenses = BigDecimal.ZERO;
 
-    private BigDecimal discount;
+    private BigDecimal discount = BigDecimal.ZERO;
 
     @Column(name = "gross_amount")
-    private BigDecimal grossAmount;
+    private BigDecimal grossAmount = BigDecimal.ZERO;
 
     @Column(name = "amount")
-    private BigDecimal amount;
+    private BigDecimal amount = BigDecimal.ZERO;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -67,36 +67,36 @@ public class Sale implements Serializable {
 
 
     @PreUpdate
-    public void beforeUpdate(final Sale sale) {
-        sale.setUpdatedAt(LocalDateTime.now());
+    public void beforeUpdate() {
+        this.setUpdatedAt(LocalDateTime.now());
     }
 
     @PrePersist
-    public void beforePersist(final Sale sale) {
+    public void beforePersist() {
 
-        sale.setCreatedAt(LocalDateTime.now());
+        this.setCreatedAt(LocalDateTime.now());
 
-        if (sale.getStatus() == null) {
-            sale.setStatus(Status.PENDENTE);
+        if (this.getStatus() == null) {
+            this.setStatus(Status.PENDENTE);
         }
 
-        if (sale.getDiscount() == null) {
-            sale.setDiscount(BigDecimal.ZERO);
+        if (this.getDiscount() == null) {
+            this.setDiscount(BigDecimal.ZERO);
         }
 
-        if (sale.getOtherExpenses() == null) {
-            sale.setOtherExpenses(BigDecimal.ZERO);
+        if (this.getOtherExpenses() == null) {
+            this.setOtherExpenses(BigDecimal.ZERO);
         }
 
-        if (sale.getGrossAmount() == null) {
-            sale.setGrossAmount(BigDecimal.ZERO);
+        if (this.getGrossAmount() == null) {
+            this.setGrossAmount(BigDecimal.ZERO);
         }
 
-        if (sale.getAmount() == null) {
-            sale.setAmount(BigDecimal.ZERO);
+        if (this.getAmount() == null) {
+            this.setAmount(BigDecimal.ZERO);
         }
 
-        sale.setUpdatedAt(LocalDateTime.now());
+        this.setUpdatedAt(LocalDateTime.now());
     }
 
 }

@@ -74,7 +74,7 @@ public class ProductService extends AbstractService<Product> {
     }
 
     public Product findById(Long id) throws AppNotFoundException {
-        return repository.findById(id).orElseThrow(() -> new AppNotFoundException());
+        return repository.findById(id).orElseThrow(AppNotFoundException::new);
     }
 
     public ProductDTO findByCode(Long code) throws AppNotFoundException {

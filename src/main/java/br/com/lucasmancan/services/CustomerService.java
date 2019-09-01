@@ -185,7 +185,7 @@ public class CustomerService extends AbstractService<Customer> {
     }
 
     public Customer find(Long code) throws AppNotFoundException {
-        return repository.findByCode(getLoggedAccount().getId(), code).orElseThrow(() -> new AppNotFoundException());
+        return repository.findByCode(getLoggedAccount().getId(), code).orElseThrow(AppNotFoundException::new);
     }
 
     public CustomerDTO findByCode(Long code) throws AppNotFoundException {

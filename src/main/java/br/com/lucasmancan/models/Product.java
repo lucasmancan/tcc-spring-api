@@ -44,14 +44,14 @@ public class Product  implements Serializable{
     private LocalDateTime updatedAt;
 
     @PrePersist
-    public void beforePersist(final Product product) {
-        product.setCreatedAt(LocalDateTime.now());
-        product.setUpdatedAt(LocalDateTime.now());
+    public void beforePersist() {
+        this.setCreatedAt(LocalDateTime.now());
+        this.setUpdatedAt(LocalDateTime.now());
     }
 
     @PreUpdate
-    public void beforeUpdate(final Product product) {
-        product.setUpdatedAt(LocalDateTime.now());
+    public void beforeUpdate() {
+        this.setUpdatedAt(LocalDateTime.now());
     }
 
 }
