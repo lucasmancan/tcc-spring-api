@@ -48,12 +48,12 @@ public class VendasApiApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-
-        for (int i = 0; i < 50; i++) {
-            createProduct(true);
-        }
-
-        createSales();
+//
+//        for (int i = 0; i < 50; i++) {
+//            createProduct(true);
+//        }
+//
+//        createSales();
 
     }
 

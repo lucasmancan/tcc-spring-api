@@ -3,7 +3,6 @@ package br.com.lucasmancan.services;
 import br.com.lucasmancan.dtos.ProductDTO;
 import br.com.lucasmancan.exceptions.AppNotFoundException;
 import br.com.lucasmancan.models.Product;
-import br.com.lucasmancan.models.ProductCategory;
 import br.com.lucasmancan.repositories.ProductRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,50 +26,49 @@ public class ProductService extends AbstractService<Product> {
     @Autowired
     private ModelMapper mapper;
 
-    private Product convert(ProductDTO dto) {
-        return this.convert(dto, null);
-    }
 
-    private Product convert(ProductDTO dto, Product product) {
+    private Product convert(ProductDTO dto, Product product) throws AppNotFoundException {
 
         if (product == null) {
             product = new Product();
         }
 
-        product = mapper.map(product, Product.class);
-        product.setCategory(mapper.map(dto.getCategory(), ProductCategory.class));
+        product = mapper.map(dto, Product.class);
+        product.setCategory(productCategoryService.findByCode(dto.getCategory().getCode()));
+        product.setAccount(getLoggedAccount());
+        product.setUpdatedAt(LocalDateTime.now());
 
         return product;
     }
 
     private ProductDTO convert(Product product) {
-        var dto = mapper.map(product, ProductDTO.class);
-        return dto;
+        return mapper.map(product, ProductDTO.class);
     }
 
-    public ProductDTO save(ProductDTO dto) throws AppNotFoundException {
+    public void save(ProductDTO dto) throws AppNotFoundException {
 
-        var product = mapper.map(dto, Product.class);
-        var productCategory = productCategoryService.findByCode(dto.getCode());
+        var product = convert(dto, null);
 
-        product.setCategory(productCategory);
         product.setCreatedAt(LocalDateTime.now());
         product.setAccount(getLoggedAccount());
         product.setUpdatedAt(LocalDateTime.now());
         product.setCreationAppUser(getPrincipal());
 
-        product = repository.save(product);
-
-        return convert(product);
+        repository.save(product);
     }
 
-    public void remove(Product entity) {
+    public void remove(Long code) throws AppNotFoundException {
+        var entity = find(code);
+
         repository.delete(entity);
     }
 
     @Cacheable(value = "productsCache")
-    public Page<ProductDTO> findAll(Pageable pageable) {
-        return repository.findAll(getLoggedAccount().getId(), pageable);
+    public Page<ProductDTO> findAll(Pageable pageable, String name, String categoryName) {
+
+        var domainPageable = repository.findAll(getLoggedAccount().getId(), pageable, name, categoryName);
+
+        return domainPageable.map(this::convert);
     }
 
     public Product findById(Long id) throws AppNotFoundException {
@@ -92,6 +90,8 @@ public class ProductService extends AbstractService<Product> {
         var product = find(code);
 
         product = convert(productDTO, product);
+
+        product.setCode(code);
 
         return convert(product);
     }

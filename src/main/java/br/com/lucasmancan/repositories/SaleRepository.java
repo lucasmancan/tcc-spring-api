@@ -15,7 +15,7 @@ import java.util.Optional;
 @Repository
 public interface SaleRepository extends JpaRepository<Sale, Long> {
 
-	@Query("SELECT p FROM Sale p JOIN FETCH p.items  JOIN FETCH p.account a JOIN FETCH p.employee LEFT JOIN FETCH p.items WHERE a.id =:accountId and p.code=:code")
+    @Query("SELECT p FROM Sale p JOIN FETCH p.account a JOIN FETCH p.employee LEFT JOIN FETCH p.items WHERE a.id =:accountId and p.code=:code")
 	Optional<Sale> findByCode(@Param("accountId") Long accountId, @Param("code") Long Code);
 
 	@Query(value = "SELECT p FROM Sale p JOIN FETCH p.items  JOIN FETCH p.employee WHERE p.account.id =:accountId and (:status is null or p.status =:status) and (:customerName is null or p.employee.name =:customerName) and " +

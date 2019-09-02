@@ -16,188 +16,150 @@ import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class SaleService extends AbstractService<Sale> {
 
-	@Autowired
-	private SaleRepository repository;
 
-	@Autowired
-	private ProductService productService;
+    @Autowired
+    private SaleRepository repository;
 
-	@Autowired
-	private ModelMapper mapper;
+    @Autowired
+    private ProductService productService;
 
-	public Sale convert(SaleDTO saleDTO) throws AppNotFoundException {
+    @Autowired
+    private ModelMapper mapper;
 
-		var sale = new Sale();
+    public Sale convert(SaleDTO saleDTO) throws AppNotFoundException {
 
-		sale.setCode(saleDTO.getCode());
-		sale.setStatus(saleDTO.getStatus());
-		sale.setOtherExpenses(saleDTO.getOtherExpenses());
-		sale.setDiscount(saleDTO.getDiscount());
-		sale.setAmount(saleDTO.getAmount());
-		sale.setGrossAmount(saleDTO.getGrossAmount());
-		sale.setUpdatedAt(saleDTO.getUpdatedAt());
+        var sale = new Sale();
 
-		if (sale.getAccount() == null) {
-			sale.setAccount(getLoggedAccount());
-		}
+        sale.setCode(saleDTO.getCode());
+        sale.setStatus(saleDTO.getStatus());
+        sale.setOtherExpenses(saleDTO.getOtherExpenses());
+        sale.setDiscount(saleDTO.getDiscount());
+        sale.setAmount(saleDTO.getAmount());
+        sale.setGrossAmount(saleDTO.getGrossAmount());
+        sale.setUpdatedAt(saleDTO.getUpdatedAt());
 
-		if (sale.getEmployee() == null) {
-			sale.setEmployee(getPrincipal());
-		}
+        if (sale.getAccount() == null) {
+            sale.setAccount(getLoggedAccount());
+        }
 
-		if (!CollectionUtils.isEmpty(saleDTO.getItems())) {
+        if (sale.getEmployee() == null) {
+            sale.setEmployee(getPrincipal());
+        }
 
-			sale.setOtherExpenses(BigDecimal.ZERO);
-			sale.setDiscount(BigDecimal.ZERO);
-			sale.setAmount(BigDecimal.ZERO);
-			sale.setGrossAmount(BigDecimal.ZERO);
+        if (!CollectionUtils.isEmpty(saleDTO.getItems())) {
 
-			for (SaleItemDTO saleItemDTO : saleDTO.getItems()) {
+            sale.setOtherExpenses(BigDecimal.ZERO);
+            sale.setDiscount(BigDecimal.ZERO);
+            sale.setAmount(BigDecimal.ZERO);
+            sale.setGrossAmount(BigDecimal.ZERO);
 
-				final SaleItem saleItem = new SaleItem();
+            for (SaleItemDTO saleItemDTO : saleDTO.getItems()) {
 
-				saleItem.setAmount(saleItemDTO.getAmount());
-				saleItem.setStatus(saleItemDTO.getStatus());
-				saleItem.setGrossAmount(saleItemDTO.getGrossAmount());
-				saleItem.setDiscount(saleItemDTO.getDiscount());
-				saleItem.setOtherExpenses(saleItemDTO.getOtherExpenses());
-				saleItem.setUnitary(saleItemDTO.getUnitary());
-				saleItem.setProduct(productService.find(saleItemDTO.getProduct().getCode()));
+                final SaleItem saleItem = new SaleItem();
 
-				saleItem.setGrossAmount(saleItem.getUnitary()
-						.multiply(new BigDecimal(saleItem.getQuantity()))
-						.add(saleItem.getOtherExpenses()));
+                saleItem.setAmount(saleItemDTO.getAmount());
+                saleItem.setStatus(saleItemDTO.getStatus());
+                saleItem.setGrossAmount(saleItemDTO.getGrossAmount());
+                saleItem.setDiscount(saleItemDTO.getDiscount());
+                saleItem.setOtherExpenses(saleItemDTO.getOtherExpenses());
+                saleItem.setUnitary(saleItemDTO.getUnitary());
+                saleItem.setProduct(productService.find(saleItemDTO.getProduct().getCode()));
 
-				saleItem.setAmount(saleItem.getGrossAmount().subtract(saleItem.getDiscount()));
+                saleItem.setGrossAmount(saleItem.getUnitary()
+                        .multiply(new BigDecimal(saleItem.getQuantity()))
+                        .add(saleItem.getOtherExpenses()));
 
-				sale.setGrossAmount(sale.getGrossAmount().add(saleItem.getGrossAmount()));
-				sale.setAmount(sale.getAmount().add(saleItem.getAmount()));
-				sale.setDiscount(sale.getDiscount().add(saleItem.getDiscount()));
-				sale.setOtherExpenses(sale.getOtherExpenses().add(saleItem.getOtherExpenses()));
+                saleItem.setAmount(saleItem.getGrossAmount().subtract(saleItem.getDiscount()));
 
-				sale.getItems().add(saleItem);
-			}
-		}
+                sale.setGrossAmount(sale.getGrossAmount().add(saleItem.getGrossAmount()));
+                sale.setAmount(sale.getAmount().add(saleItem.getAmount()));
+                sale.setDiscount(sale.getDiscount().add(saleItem.getDiscount()));
+                sale.setOtherExpenses(sale.getOtherExpenses().add(saleItem.getOtherExpenses()));
 
-		return sale;
-	}
+                sale.getItems().add(saleItem);
+            }
+        }
 
-	public SaleDTO convert(Sale sale) {
+        return sale;
+    }
 
-		var saleDTO = mapper.map(sale, SaleDTO.class);
-//
-//        saleDTO.setCode(sale.getCode());
-//        saleDTO.setStatus(sale.getStatus());
-//        saleDTO.setOtherExpenses(sale.getOtherExpenses());
-//        saleDTO.setDiscount(sale.getDiscount());
-//        saleDTO.setAmount(sale.getAmount());
-//        saleDTO.setGrossAmount(sale.getGrossAmount());
-//        saleDTO.setUpdatedAt(sale.getUpdatedAt());
-//
-//        if (!CollectionUtils.isEmpty(sale.getItems())) {
-//
-//            for (SaleItem saleItem : sale.getItems()) {
-//
-//                final SaleItemDTO saleItemDTO = new SaleItemDTO();
-//                final ProductDTO productDTO = mapper.map(saleItem.getProduct(), ProductDTO.class);
-//
-//                saleItemDTO.setProduct(productDTO);
-//                saleItemDTO.setAmount(saleItem.getAmount());
-//                saleItemDTO.setStatus(saleItem.getStatus());
-//                saleItemDTO.setGrossAmount(saleItem.getGrossAmount());
-//                saleItemDTO.setDiscount(saleItem.getDiscount());
-//                saleItemDTO.setOtherExpenses(saleItem.getOtherExpenses());
-//                saleItemDTO.setUnitary(saleItem.getUnitary());
-//
-//                saleDTO.getItems().add(saleItemDTO);
-//            }
-//        }
+    public SaleDTO convert(Sale sale) {
+        var saleDTO = mapper.map(sale, SaleDTO.class);
+        return saleDTO;
+    }
 
-		return saleDTO;
-	}
+    public void save(SaleDTO saleDTO) throws AppNotFoundException {
 
-	public SaleDTO save(SaleDTO saleDTO) throws AppNotFoundException {
+        var sale = convert(saleDTO);
 
-		var sale = convert(saleDTO);
+        if (sale.getCode() != null) {
+            var savedSale = this.find(sale.getCode());
 
-		if (sale.getCode() != null) {
-			var savedSale = this.find(sale.getCode());
+            sale = this.map(sale, savedSale);
+        }
 
-			sale = this.map(sale, savedSale);
-		}
+        repository.save(sale);
+    }
 
-		sale = repository.saveAndFlush(sale);
-
-		Optional<Sale> sale1 = repository.findById(sale.getId());
-
-		System.out.println(sale.getCode());
-
-		return this.convert(sale1.get());
-	}
-
-	private Sale map(Sale sale, Sale savedSale) {
-		sale.setId(savedSale.getId());
-		return sale;
-	}
+    private Sale map(Sale sale, Sale oldSale) {
+        sale.setId(oldSale.getId());
+        sale.setCode(oldSale.getCode());
+        return sale;
+    }
 
 
-	public void remove(Long code) throws AppNotFoundException {
+    public void remove(Long code) throws AppNotFoundException {
 
-		var sale = find(code);
+        var sale = find(code);
 
-		repository.delete(sale);
-	}
+        repository.delete(sale);
+    }
 
-	@Cacheable(value = "salesCache")
-	public Page<SaleDTO> findAll(Pageable pageable) {
-		return repository.findAll(getLoggedAccount().getId(), pageable);
-	}
+    @Cacheable(value = "salesCache")
+    public Page<SaleDTO> findAll(Pageable pageable) {
+        return repository.findAll(getLoggedAccount().getId(), pageable);
+    }
 
-	@Cacheable(value = "salesCache")
-	public Page<SaleDTO> findAll(Pageable pageable, String status, String customerName, BigDecimal lower, BigDecimal upper) {
-		return repository.findAll(getLoggedAccount().getId(), pageable);
-	}
+    @Cacheable(value = "salesCache")
+    public Page<SaleDTO> findAll(Pageable pageable, String status, String customerName, BigDecimal lower, BigDecimal upper) {
+        return repository.findAll(getLoggedAccount().getId(), pageable);
+    }
 
-	@Cacheable(value = "salesCache")
-	public List findAll() {
-		return repository.findAll();
-	}
+    @Cacheable(value = "salesCache")
+    public List findAll() {
+        return repository.findAll();
+    }
 
-	@Cacheable(value = "salesCache", key = "#id")
-	public Sale findById(Long id) throws AppNotFoundException {
-		return repository.findById(id).orElseThrow(() -> new AppNotFoundException());
-	}
+    @Cacheable(value = "salesCache", key = "#id")
+    public Sale findById(Long id) throws AppNotFoundException {
+        return repository.findById(id).orElseThrow(() -> new AppNotFoundException());
+    }
 
-	public Sale find(Long code) throws AppNotFoundException {
-		return repository.findByCode(getLoggedAccount().getId(), code).orElseThrow(AppNotFoundException::new);
-	}
+    public Sale find(Long code) throws AppNotFoundException {
+        return repository.findByCode(getLoggedAccount().getId(), code).orElseThrow(AppNotFoundException::new);
+    }
 
-	@Cacheable(value = "salesCache", key = "#code")
-	public SaleDTO findByCode(Long code) throws AppNotFoundException {
+    @Cacheable(value = "salesCache", key = "#code")
+    public SaleDTO findByCode(Long code) throws AppNotFoundException {
 
-		var sale = repository.findByCode(getLoggedAccount().getId(), code).orElseThrow(AppNotFoundException::new);
+        var sale = repository.findByCode(getLoggedAccount().getId(), code).orElseThrow(AppNotFoundException::new);
 
-		return convert(sale);
-	}
+        return convert(sale);
+    }
 
-	public SaleDTO update(Long code, SaleDTO saleDTO) throws AppNotFoundException {
+    public SaleDTO update(Long code, SaleDTO saleDTO) throws AppNotFoundException {
 
-		var sale = find(code);
+        var oldSale = find(code);
+        var sale = convert(saleDTO);
 
-		sale.setAmount(saleDTO.getAmount());
-		sale.setDiscount(saleDTO.getDiscount());
-		sale.setGrossAmount(saleDTO.getGrossAmount());
-		sale.setOtherExpenses(saleDTO.getOtherExpenses());
-		sale.setStatus(saleDTO.getStatus());
-		sale.setUpdatedUser(getPrincipal());
+        sale = map(sale, oldSale);
 
-		sale = repository.save(sale);
+        sale = repository.save(sale);
 
-		return convert(sale);
-	}
+        return convert(sale);
+    }
 }

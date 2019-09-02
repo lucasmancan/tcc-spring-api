@@ -1,6 +1,5 @@
 package br.com.lucasmancan.dtos;
 
-import br.com.lucasmancan.models.Product;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,10 +28,4 @@ public class ProductDTO implements Serializable {
     @NotNull
     private ProductCategoryDTO category;
 
-    public ProductDTO(Product product) {
-        this.code = product.getCode();
-        this.updatedAt = product.getUpdatedAt();
-        this.name = product.getName();
-        this.description = product.getDescription();
-    }
 }
