@@ -9,19 +9,19 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("SELECT p FROM Product p JOIN fetch p.category JOIN FETCH p.account JOIN FETCH p.creationAppUser WHERE p.account.id =:accountId and p.code=:code")
-    public Optional<Product> findByCode(@Param("accountId") Long accountId, @Param("code") Long Code);
+    Optional<Product> findByCode(@Param("accountId") Long accountId, @Param("code") Long Code);
 
-    @Query("SELECT p FROM Product p WHERE p.account.id =:accountId")
-    public List<ProductDTO> findAll(@Param("accountId") Long accountId);
+    @Query(value = "SELECT p FROM Product p JOIN FETCH p.category c " +
+            " WHERE p.account.id =:accountId AND (:name is null or p.name=:name) AND (:categoryName is null or c.ca =:categoryName)", countQuery = "select count(p) from Product p WHERE p.account.id =:accountId AND (:name is null or p.name=:name) AND (:categoryName is null or c.name=:categoryName)")
+    Page<Product> findAll(@Param("accountId") Long accountId, Pageable pageable, @Param("name") String name, @Param("categoryName") String categoryName);
 
-    @Query(value = "SELECT p FROM Product p WHERE p.account.id =:accountId")
+    @Query(value = "SELECT p FROM Product p JOIN FETCH p.category WHERE p.account.id =:accountId")
     Page<ProductDTO> findAll(@Param("accountId") Long accountId, Pageable pageable);
 
 }

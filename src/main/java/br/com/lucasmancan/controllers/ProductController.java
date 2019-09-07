@@ -1,81 +1,113 @@
 package br.com.lucasmancan.controllers;
 
+import br.com.lucasmancan.dtos.AppResponse;
+import br.com.lucasmancan.dtos.ProductDTO;
 import br.com.lucasmancan.exceptions.AppNotFoundException;
-import br.com.lucasmancan.models.Product;
-import br.com.lucasmancan.models.ProductCategory;
 import br.com.lucasmancan.services.ProductCategoryService;
 import br.com.lucasmancan.services.ProductService;
 import br.com.lucasmancan.utils.AppPaginator;
+import lombok.extern.log4j.Log4j2;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.websocket.server.PathParam;
-import java.util.Date;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/products")
+@Log4j2
 public class ProductController {
 
     @Autowired
     private ProductService productService;
 
     @Autowired
+    private ModelMapper mapper;
+
+    @Autowired
     private ProductCategoryService productCategoryService;
 
     @ResponseBody
     @GetMapping
-    public ResponseEntity getAll(@PageableDefault(page = 0, size = 30) @RequestParam("page") int page, @RequestParam("size") int size) {
+    public AppResponse getAll(@PageableDefault(page = 0, size = 30) @RequestParam("page") Integer page,
+                              @RequestParam("size") Integer size,
+                              @RequestParam("name") String name,
+                              @RequestParam("categoryName") String categoryName) {
+
         try {
+            if (page == null) {
+                page = 1;
+            }
 
-            var products = productService.findAll(new AppPaginator(page, size));
+            if (size == null) {
+                size = 30;
+            }
 
-            return ResponseEntity.ok(products);
-        } catch (Exception e) {
-            return new ResponseEntity(e, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new AppResponse("", productService.findAll(new AppPaginator(page, size), name, categoryName));
+        } catch (Exception ex) {
+            log.warn("Erro Interno" + ex);
+            return AppResponse.OOPS;
         }
-
     }
 
     @ResponseBody
     @GetMapping("/{code}")
-    public ResponseEntity getByCode(@PathVariable("code") Long code) {
+    public AppResponse getByCode(@PathVariable("code") Long code) {
         try {
-
-            var product = productService.findByCode(code);
-
-            return ResponseEntity.ok(product);
-
-        } catch (AppNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return new ResponseEntity(e, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new AppResponse("", productService.findByCode(code));
+        } catch (AppNotFoundException ex) {
+            return new AppResponse("Produto não encontrado!", null);
+        } catch (Exception ex) {
+            log.warn("Erro Interno" + ex);
+            return AppResponse.OOPS;
         }
     }
 
-    @GetMapping("/generate")
-    public ResponseEntity generate() {
+    @ResponseBody
+    @PostMapping
+    @ResponseStatus(code = HttpStatus.CREATED)
+    public AppResponse save(@Valid @RequestBody ProductDTO productDTO) {
+        try {
+            productService.save(productDTO);
 
-
-        ProductCategory category = new ProductCategory();
-        category.setName("Categoria teste " + new Date().getTime());
-        category.setDescription("Descricao " + category.getName());
-
-        category = productCategoryService.save(category);
-
-        for (var i = 0; i < 500; i++) {
-
-            Product product = new Product();
-            product.setName("Produto teste " + i);
-            product.setDescription("Descricao Produto Teste: " + i);
-            product.setCategory(category);
-
-            productService.save(product);
-
+            return new AppResponse("Produto atualizado!", null);
+        } catch (AppNotFoundException ex) {
+            return new AppResponse("Produto não encontrado!", null);
+        } catch (Exception ex) {
+            log.warn("Erro Interno" + ex);
+            return AppResponse.OOPS;
         }
-
-        return ResponseEntity.ok().build();
     }
+
+    @ResponseBody
+    @PutMapping("/{code}")
+    @ResponseStatus(code = HttpStatus.OK)
+    public AppResponse update(@PathVariable("code") Long code, @Valid @RequestBody ProductDTO productDTO) throws AppNotFoundException {
+        try {
+            return new AppResponse("Produto atualizado!", productService.update(code, productDTO));
+        } catch (AppNotFoundException ex) {
+            return new AppResponse("Produto não encontrado!", null);
+        } catch (Exception ex) {
+            log.warn("Erro Interno" + ex);
+            return AppResponse.OOPS;
+        }
+    }
+
+    @ResponseBody
+    @DeleteMapping("/{code}")
+    @ResponseStatus(code = HttpStatus.OK)
+    public AppResponse remove(@PathVariable("code") Long code) {
+        try {
+            productService.remove(code);
+            return new AppResponse("Produto excluído!", null);
+        } catch (AppNotFoundException ex) {
+            return new AppResponse("Produto não encontrado!", null);
+        } catch (Exception ex) {
+            log.warn("Erro Interno" + ex);
+            return AppResponse.OOPS;
+        }
+    }
+
 }

@@ -1,5 +1,7 @@
 package br.com.lucasmancan;
+
 import net.sf.ehcache.config.CacheConfiguration;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.CacheManager;
@@ -10,8 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
-
-import javax.annotation.PreDestroy;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
 @EnableCaching
@@ -22,24 +23,19 @@ public class AppConfig {
 
     private net.sf.ehcache.CacheManager cacheManager;
 
-//    @PreDestroy
-//    public void destroy() {
-//        cacheManager.shutdown();
-//    }
-//
-//    @Bean
-//    public CacheManager cacheManager() {
-//        log.debug("Starting Ehcache");
-//        cacheManager = net.sf.ehcache.CacheManager.create();
-//        cacheManager.getConfiguration().setMaxBytesLocalHeap("16M");
-//        EhCacheCacheManager ehCacheManager = new EhCacheCacheManager();
-//        ehCacheManager.setCacheManager(cacheManager);
-//        return ehCacheManager;
-//    }
-
     @Bean
     public CacheManager cacheManager() {
         return new EhCacheCacheManager(ehCacheCacheManager().getObject());
+    }
+
+    @Bean
+    public ModelMapper getModelMapper() {
+        return new ModelMapper();
+    }
+
+    @Bean
+    public RestTemplate getWebClient() {
+        return new RestTemplate();
     }
 
     @Bean

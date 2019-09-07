@@ -11,12 +11,14 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity
 @Table(name = "users")
-@EqualsAndHashCode(callSuper = false, exclude = {"account", "mainAddress", "mainPhone"})
-@ToString(callSuper = false, exclude = {"account", "mainAddress", "mainPhone"})
+@EqualsAndHashCode(callSuper = false, exclude = {"account", "emails", "phones", "addresses", "account"})
+@ToString(callSuper = false, exclude = {"account", "emails", "phones", "addresses", "account"})
 @AllArgsConstructor
 @NoArgsConstructor
 public class AppUser implements Serializable, UserDetails, Authentication {
@@ -56,23 +58,15 @@ public class AppUser implements Serializable, UserDetails, Authentication {
 
 	@Column(name = "username")
 	private String username;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "main_phone_id")
-	private Phone mainPhone;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "main_address_id")
-	private Address mainAddress;
 
-//	@OneToMany(fetch = FetchType.LAZY, mappedBy = "appUser")
-//	private Set<UserEmail> emails = new HashSet<>();
-//
-//	@OneToMany(fetch = FetchType.LAZY, mappedBy = "appUser")
-//	private Set<UserPhone> phones = new HashSet<>();
-//
-//	@OneToMany(fetch = FetchType.LAZY, mappedBy = "appUser")
-//	private Set<UserAddress> addresses = new HashSet<>();
+	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "appUser")
+	private Set<UserEmail> emails = new HashSet<>();
+
+	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "appUser")
+	private Set<UserPhone> phones = new HashSet<>();
+
+	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "appUser")
+	private Set<UserAddress> addresses = new HashSet<>();
 //
 	/*@OneToMany(fetch = FetchType.LAZY, mappedBy = "creationAppUser")
 	private Set<UserPermissions> permissions = new HashSet<>();*/
@@ -176,4 +170,8 @@ public class AppUser implements Serializable, UserDetails, Authentication {
 		return this.admin;
 	}
 
+    @Override
+    public String getName() {
+        return this.username;
+    }
 }
