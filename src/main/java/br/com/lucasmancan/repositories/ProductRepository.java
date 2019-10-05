@@ -17,11 +17,11 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("SELECT p FROM Product p JOIN fetch p.category JOIN FETCH p.account JOIN FETCH p.creationAppUser WHERE p.account.id =:accountId and p.code=:code")
     Optional<Product> findByCode(@Param("accountId") Long accountId, @Param("code") Long Code);
 
-    @Query(value = "SELECT p FROM Product p JOIN FETCH p.category c " +
-            " WHERE p.account.id =:accountId AND (:name is null or p.name=:name) AND (:categoryName is null or c.ca =:categoryName)", countQuery = "select count(p) from Product p WHERE p.account.id =:accountId AND (:name is null or p.name=:name) AND (:categoryName is null or c.name=:categoryName)")
-    Page<Product> findAll(@Param("accountId") Long accountId, Pageable pageable, @Param("name") String name, @Param("categoryName") String categoryName);
+//    @Query(value = "SELECT p FROM Product p JOIN FETCH p.category c " +
+//            " WHERE p.account.id =:accountId AND (:name is null or p.name=:name) AND (:categoryName is null or c.description =:categoryName)", countQuery = "select cp) from Product p ")
+//    Page<Product> findAll(@Param("accountId") Long accountId, Pageable pageable, @Param("name") String name, @Param("categoryName") String categoryName);
 
-    @Query(value = "SELECT p FROM Product p JOIN FETCH p.category WHERE p.account.id =:accountId")
-    Page<ProductDTO> findAll(@Param("accountId") Long accountId, Pageable pageable);
+    @Query(value = "SELECT p FROM Product p JOIN FETCH p.account LEFT JOIN FETCH p.category  c WHERE p.account.id =:accountId AND (:name is null or p.name like CONCAT('%',:name,'%')) AND (:categoryName is null or c.name like CONCAT('%',:categoryName,'%'))", countQuery = "SELECT count(p) from Product p")
+    Page<Product> findAll(@Param("accountId") Long accountId, Pageable pageable, String name, String categoryName);
 
 }

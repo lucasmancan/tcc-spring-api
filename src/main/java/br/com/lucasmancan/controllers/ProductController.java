@@ -31,10 +31,10 @@ public class ProductController {
 
     @ResponseBody
     @GetMapping
-    public AppResponse getAll(@PageableDefault(page = 0, size = 30) @RequestParam("page") Integer page,
-                              @RequestParam("size") Integer size,
-                              @RequestParam("name") String name,
-                              @RequestParam("categoryName") String categoryName) {
+    public AppResponse getAll(@PageableDefault(page = 0, size = 30) @RequestParam(value="page", required = false) Integer page,
+                              @RequestParam(value = "size", required = false) Integer size,
+                              @RequestParam(value="name", required = false) String name,
+                              @RequestParam(value = "categoryName", required = false) String categoryName) {
 
         try {
             if (page == null) {
@@ -47,7 +47,7 @@ public class ProductController {
 
             return new AppResponse("", productService.findAll(new AppPaginator(page, size), name, categoryName));
         } catch (Exception ex) {
-            log.warn("Erro Interno" + ex);
+//            log.warn("Erro Interno" + ex);
             return AppResponse.OOPS;
         }
     }
@@ -60,7 +60,7 @@ public class ProductController {
         } catch (AppNotFoundException ex) {
             return new AppResponse("Produto não encontrado!", null);
         } catch (Exception ex) {
-            log.warn("Erro Interno" + ex);
+//            log.warn("Erro Interno" + ex);
             return AppResponse.OOPS;
         }
     }
@@ -76,7 +76,7 @@ public class ProductController {
         } catch (AppNotFoundException ex) {
             return new AppResponse("Produto não encontrado!", null);
         } catch (Exception ex) {
-            log.warn("Erro Interno" + ex);
+//            log.warn("Erro Interno" + ex);
             return AppResponse.OOPS;
         }
     }
@@ -90,7 +90,7 @@ public class ProductController {
         } catch (AppNotFoundException ex) {
             return new AppResponse("Produto não encontrado!", null);
         } catch (Exception ex) {
-            log.warn("Erro Interno" + ex);
+//            log.warn("Erro Interno" + ex);
             return AppResponse.OOPS;
         }
     }
@@ -105,7 +105,7 @@ public class ProductController {
         } catch (AppNotFoundException ex) {
             return new AppResponse("Produto não encontrado!", null);
         } catch (Exception ex) {
-            log.warn("Erro Interno" + ex);
+//            log.warn("Erro Interno" + ex);
             return AppResponse.OOPS;
         }
     }

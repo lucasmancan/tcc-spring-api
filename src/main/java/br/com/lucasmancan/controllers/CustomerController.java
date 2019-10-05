@@ -22,8 +22,8 @@ public class CustomerController {
 
     @ResponseBody
     @GetMapping
-    public Page<Customer> getAll(@PageableDefault(page = 0, size = 30) @RequestParam("page") int page, @RequestParam("size") int size) {
-        return customerService.findAll(new AppPaginator(page, size));
+    public Page<Customer> getAll(@PageableDefault(page = 0, size = 30) @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size) {
+        return customerService.findAll(new AppPaginator(1, 15));
     }
 
     @ResponseBody

@@ -85,6 +85,23 @@ public class SaleController extends AbstractService<Sale> {
     }
 
     @ResponseBody
+    @GetMapping("/summary")
+    public AppResponse getByCode() throws AppNotFoundException {
+        try {
+            return new AppResponse("", saleService.getSummary());
+        } catch (Exception ex) {
+            log.warn("Erro ao buscar resumo de vendas" + ex);
+            return AppResponse.OOPS;
+        }
+    }
+
+
+
+
+
+
+
+    @ResponseBody
     @DeleteMapping("/{code}")
     public AppResponse delete(@PathVariable("code") Long code) throws AppNotFoundException {
         try {

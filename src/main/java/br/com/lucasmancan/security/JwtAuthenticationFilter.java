@@ -77,7 +77,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 				.claim("roles", roles)
 				.compact();
 
-
 		response.addHeader(SecurityConstants.TOKEN_HEADER, SecurityConstants.TOKEN_PREFIX + token);
+		response.addHeader("access-control-expose-headers", "Authorization");
+
 	}
 }

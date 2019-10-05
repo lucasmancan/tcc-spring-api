@@ -1,5 +1,6 @@
 package br.com.lucasmancan.models;
 
+import br.com.lucasmancan.dtos.AccountSummary;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -20,6 +21,23 @@ import java.util.Set;
 @NoArgsConstructor
 @Cacheable
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+//@SqlResultSetMapping(
+//        name="getSummaryResult",
+//        classes={
+//                @ConstructorResult(
+//                        targetClass= AccountSummary.class,
+//                        columns={
+//                                @ColumnResult(name="amount", type=BigDecimal.class),
+//                                @ColumnResult(name="discount", type=BigDecimal.class),
+//                                @ColumnResult(name="grossAmount", type=BigDecimal.class),
+//                                @ColumnResult(name="otherExpenses", type=BigDecimal.class),
+//                                @ColumnResult(name="total", type=Integer.class)
+//                        }
+//                )
+//        }
+//)
+//
+//@NamedNativeQuery(name="Sale.getSummary", query="select sum(amount) as amount,sum(discount) as discount, sum(gross_amount) as grossAmount, sum(other_expenses) as otherExpenses, count(*) as total  from sales where account_id =:accountId group by account_id", resultSetMapping="getSummaryResult")
 public class Sale implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)

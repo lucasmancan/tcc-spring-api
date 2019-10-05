@@ -1,8 +1,10 @@
 package br.com.lucasmancan.services;
 
+import br.com.lucasmancan.dtos.AccountSummary;
 import br.com.lucasmancan.dtos.SaleDTO;
 import br.com.lucasmancan.dtos.SaleItemDTO;
 import br.com.lucasmancan.exceptions.AppNotFoundException;
+import br.com.lucasmancan.models.Account;
 import br.com.lucasmancan.models.Sale;
 import br.com.lucasmancan.models.SaleItem;
 import br.com.lucasmancan.repositories.SaleRepository;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 @Service
@@ -161,5 +164,21 @@ public class SaleService extends AbstractService<Sale> {
         sale = repository.save(sale);
 
         return convert(sale);
+    }
+
+    public AccountSummary getSummary() {
+
+
+        var result =  repository.getSummary(getLoggedAccount().getId());
+
+        AccountSummary accountSummary = new AccountSummary();
+
+        accountSummary.setAmount((BigDecimal) result[0][0]);
+        accountSummary.setDiscount((BigDecimal) result[0][1]);
+        accountSummary.setGrossAmount((BigDecimal) result[0][2]);
+        accountSummary.setOtherExpenses((BigDecimal) result[0][3]);
+        accountSummary.setTotal((BigInteger) result[0][4]);
+
+        return accountSummary;
     }
 }
