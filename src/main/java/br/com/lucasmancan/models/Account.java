@@ -1,6 +1,6 @@
 package br.com.lucasmancan.models;
 
-import java.util.Date;
+import java.util.Date;import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,6 +14,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -32,7 +33,9 @@ public class Account {
 	@Id
 	@GeneratedValue( strategy = GenerationType.AUTO)
 	private Long id;
-	
+
+	private String name;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn( name ="admin_id")
 	private AppUser admin;
@@ -44,11 +47,15 @@ public class Account {
 	private Boolean active;
 	
 	@Column(name="created_at")
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
 	@Temporal(TemporalType.TIMESTAMP)
+
 	private Date createdAt;
 	
 	@Column(name="updated_at")
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
 	@Temporal(TemporalType.TIMESTAMP)
+
 	private Date updatedAt;
 	
 }

@@ -5,10 +5,7 @@ import br.com.lucasmancan.dtos.CustomerDTO;
 import br.com.lucasmancan.dtos.EmailDTO;
 import br.com.lucasmancan.dtos.PhoneDTO;
 import br.com.lucasmancan.exceptions.AppNotFoundException;
-import br.com.lucasmancan.models.Customer;
-import br.com.lucasmancan.models.CustomerAddress;
-import br.com.lucasmancan.models.CustomerEmail;
-import br.com.lucasmancan.models.CustomerPhone;
+import br.com.lucasmancan.models.*;
 import br.com.lucasmancan.repositories.CustomerRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -167,6 +164,11 @@ public class CustomerService extends AbstractService<Customer> {
 
         var customer = convert(dto);
 
+
+        if (customer.getStatus() == null) {
+            customer.setStatus(Status.active);
+        }
+
         customer.setAccount(getLoggedAccount());
         customer.setCreationAppUser(getPrincipal());
 
@@ -177,7 +179,10 @@ public class CustomerService extends AbstractService<Customer> {
 
     public void remove(Long code) throws AppNotFoundException {
         var customer = find(code);
-        repository.delete(customer);
+
+
+        customer.setStatus(Status.inactive);
+        repository.save(customer);
     }
 
     public Page<Customer> findAll(Pageable pageable) {
@@ -205,5 +210,9 @@ public class CustomerService extends AbstractService<Customer> {
         customer = convert(customerDTO, customer);
 
         return convert(customer);
+    }
+
+    public List<Customer> findAll(String name) {
+        return repository.findAllByName(getLoggedAccount().getId(), name);
     }
 }

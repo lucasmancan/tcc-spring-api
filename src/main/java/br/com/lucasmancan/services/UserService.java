@@ -5,18 +5,12 @@ import br.com.lucasmancan.dtos.AppUserDTO;
 import br.com.lucasmancan.dtos.EmailDTO;
 import br.com.lucasmancan.dtos.PhoneDTO;
 import br.com.lucasmancan.exceptions.AppNotFoundException;
-import br.com.lucasmancan.models.AppUser;
-import br.com.lucasmancan.models.UserAddress;
-import br.com.lucasmancan.models.UserEmail;
-import br.com.lucasmancan.models.UserPhone;
+import br.com.lucasmancan.models.*;
 import br.com.lucasmancan.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
+import java.util.Date;import java.util.*;
 
 
 @Service
@@ -156,9 +150,14 @@ public class UserService extends AbstractService<AppUser> {
         return dto;
     }
 
+
     public AppUserDTO save(AppUserDTO dto) throws AppNotFoundException {
 
         var user = convert(dto);
+
+        if(user.getStatus() == null){
+            user.setStatus(Status.active);
+        }
 
         user.setAccount(getLoggedAccount());
         user.setUpdatedAt(new Date());
@@ -169,7 +168,11 @@ public class UserService extends AbstractService<AppUser> {
 
     public void remove(Long code) throws AppNotFoundException {
         var user = find(code);
-        repository.delete(user);
+
+
+            user.setStatus(Status.inactive);
+
+        repository.save(user);
     }
 
 
@@ -187,6 +190,16 @@ public class UserService extends AbstractService<AppUser> {
         return repository.findAll();
     }
 
+    public Optional<AppUser> findById(Long id) {
+        return repository.findById(id);
+    }
+
+    public Optional<AppUser> findByName(String name) {
+        return repository.findByName(name);
+    }
+
+
+
     public AppUserDTO update(Long code, AppUserDTO userDTO) throws AppNotFoundException {
 
         var user = find(userDTO.getCode());
@@ -194,6 +207,11 @@ public class UserService extends AbstractService<AppUser> {
         user = convert(userDTO, user);
 
         return convert(user);
+    }
+
+    public Optional<AppUser> findByAccountIdAndUserEmail(Long id, String email) {
+
+        return repository.findByAccountIdAndUserEmail(id,email);
     }
 }
 

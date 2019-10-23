@@ -1,10 +1,11 @@
 package br.com.lucasmancan.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
+import java.util.Date;import java.util.Date;
 
 @Data
 @Entity
@@ -31,11 +32,15 @@ public class CustomerEmail implements Serializable {
     private ContactType type;
 	
 	@Column(name="created_at")
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
 	@Temporal(TemporalType.TIMESTAMP)
+
 	private Date createdAt;
 	
 	@Column(name="updated_at")
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
 	@Temporal(TemporalType.TIMESTAMP)
+
 	private Date updatedAt;
 
 	@ManyToOne(fetch = FetchType.LAZY)

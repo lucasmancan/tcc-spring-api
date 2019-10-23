@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-
-@Data
+import java.util.Date;@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Component
@@ -21,12 +19,12 @@ public class AppResponse {
     private String message;
     private Object data;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-    private LocalDateTime timestamp;
+    private Date timestamp;
 
     public AppResponse(String message, Object data) {
         this.message = message;
         this.data = data;
-        this.timestamp = LocalDateTime.now();
+        this.timestamp = new Date();
     }
 
 }

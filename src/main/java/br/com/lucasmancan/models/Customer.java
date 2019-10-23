@@ -1,10 +1,11 @@
 package br.com.lucasmancan.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
+import java.util.Date;import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -46,13 +47,22 @@ public class Customer implements Serializable {
 
 	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "customer")
     private Set<CustomerAddress> addresses = new HashSet<>();
-	
+
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status")
+	private Status status;
+
 	@Column(name="created_at")
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
 	@Temporal(TemporalType.TIMESTAMP)
+
 	private Date createdAt;
 	
 	@Column(name="updated_at")
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
 	@Temporal(TemporalType.TIMESTAMP)
+
 	private Date updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)

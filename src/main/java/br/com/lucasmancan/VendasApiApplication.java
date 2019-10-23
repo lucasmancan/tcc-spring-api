@@ -1,10 +1,7 @@
 package br.com.lucasmancan;
 
 import br.com.lucasmancan.models.*;
-import br.com.lucasmancan.repositories.ProductCategoryRepository;
-import br.com.lucasmancan.repositories.ProductRepository;
-import br.com.lucasmancan.repositories.SaleRepository;
-import br.com.lucasmancan.repositories.UserRepository;
+import br.com.lucasmancan.repositories.*;
 import br.com.lucasmancan.services.AccountService;
 import br.com.lucasmancan.services.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +12,15 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
+import java.util.Date;import java.util.Date;
 
 @SpringBootApplication
 @EnableCaching
 public class VendasApiApplication implements CommandLineRunner {
 
     @Autowired
-    private AccountService accountRepository;
+    private AccountRepository accountRepository;
 
     @Autowired
     private SaleRepository saleRepository;

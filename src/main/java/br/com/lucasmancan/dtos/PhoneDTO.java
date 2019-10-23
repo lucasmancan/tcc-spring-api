@@ -7,9 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
-
-@Data
+import java.util.Date;@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class PhoneDTO {
@@ -27,5 +25,5 @@ public class PhoneDTO {
     public ContactType contactType;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-    public LocalDateTime updatedAt;
+    public Date updatedAt;
 }

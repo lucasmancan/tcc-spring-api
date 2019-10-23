@@ -3,6 +3,7 @@ package br.com.lucasmancan.controllers;
 import br.com.lucasmancan.dtos.AppResponse;
 import br.com.lucasmancan.dtos.ProductDTO;
 import br.com.lucasmancan.exceptions.AppNotFoundException;
+import br.com.lucasmancan.models.Product;
 import br.com.lucasmancan.services.ProductCategoryService;
 import br.com.lucasmancan.services.ProductService;
 import br.com.lucasmancan.utils.AppPaginator;
@@ -31,23 +32,16 @@ public class ProductController {
 
     @ResponseBody
     @GetMapping
-    public AppResponse getAll(@PageableDefault(page = 0, size = 30) @RequestParam(value="page", required = false) Integer page,
-                              @RequestParam(value = "size", required = false) Integer size,
+    public AppResponse getAll(
                               @RequestParam(value="name", required = false) String name,
                               @RequestParam(value = "categoryName", required = false) String categoryName) {
 
         try {
-            if (page == null) {
-                page = 1;
-            }
 
-            if (size == null) {
-                size = 30;
-            }
 
-            return new AppResponse("", productService.findAll(new AppPaginator(page, size), name, categoryName));
+            return new AppResponse("", productService.findAll(name, categoryName));
         } catch (Exception ex) {
-//            log.warn("Erro Interno" + ex);
+            log.warn("Erro Interno" + ex);
             return AppResponse.OOPS;
         }
     }
@@ -60,7 +54,7 @@ public class ProductController {
         } catch (AppNotFoundException ex) {
             return new AppResponse("Produto não encontrado!", null);
         } catch (Exception ex) {
-//            log.warn("Erro Interno" + ex);
+            log.warn("Erro Interno" + ex);
             return AppResponse.OOPS;
         }
     }
@@ -68,15 +62,15 @@ public class ProductController {
     @ResponseBody
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
-    public AppResponse save(@Valid @RequestBody ProductDTO productDTO) {
+    public AppResponse save(@Valid @RequestBody Product product) {
         try {
-            productService.save(productDTO);
+            productService.save(product);
 
             return new AppResponse("Produto atualizado!", null);
         } catch (AppNotFoundException ex) {
             return new AppResponse("Produto não encontrado!", null);
         } catch (Exception ex) {
-//            log.warn("Erro Interno" + ex);
+            log.warn("Erro Interno" + ex);
             return AppResponse.OOPS;
         }
     }
@@ -84,13 +78,13 @@ public class ProductController {
     @ResponseBody
     @PutMapping("/{code}")
     @ResponseStatus(code = HttpStatus.OK)
-    public AppResponse update(@PathVariable("code") Long code, @Valid @RequestBody ProductDTO productDTO) throws AppNotFoundException {
+    public AppResponse update(@PathVariable("code") Long code, @Valid @RequestBody Product product) throws AppNotFoundException {
         try {
-            return new AppResponse("Produto atualizado!", productService.update(code, productDTO));
+            return new AppResponse("Produto atualizado!", productService.update(code, product));
         } catch (AppNotFoundException ex) {
             return new AppResponse("Produto não encontrado!", null);
         } catch (Exception ex) {
-//            log.warn("Erro Interno" + ex);
+            log.warn("Erro Interno" + ex);
             return AppResponse.OOPS;
         }
     }
@@ -105,7 +99,7 @@ public class ProductController {
         } catch (AppNotFoundException ex) {
             return new AppResponse("Produto não encontrado!", null);
         } catch (Exception ex) {
-//            log.warn("Erro Interno" + ex);
+            log.warn("Erro Interno" + ex);
             return AppResponse.OOPS;
         }
     }

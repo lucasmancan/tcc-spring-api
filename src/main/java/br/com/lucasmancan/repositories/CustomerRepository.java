@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -18,4 +19,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
     @Query("SELECT p FROM Customer p WHERE p.account.id =:accountId")
     Page<Customer> findAll(@Param("accountId") Long accountId, Pageable pageble);
+
+    @Query("SELECT p FROM Customer p WHERE p.account.id =:accountId and (:name is null or p.name=:name)")
+    List<Customer> findAllByName(@Param("accountId") Long accountId, String name);
 }

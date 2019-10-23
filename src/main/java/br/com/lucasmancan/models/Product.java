@@ -1,12 +1,11 @@
 package br.com.lucasmancan.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDateTime;
-
-@Data
+import java.util.Date;@Data
 @Entity
 @Table(name="products")
 @EqualsAndHashCode(callSuper=false, exclude = {"account", "category", "creationAppUser"})
@@ -23,14 +22,20 @@ public class Product  implements Serializable{
 	@JoinColumn( name ="account_id")
 	private Account account;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status")
+	private Status status;
+
 	private Long code;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn( name ="creation_user_id")
+
 	private AppUser creationAppUser;
 
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
+
 	private ProductCategory category;
 	
 	private String name;
@@ -38,20 +43,24 @@ public class Product  implements Serializable{
 	private String description;
 
 	@Column(name="created_at")
-    private LocalDateTime createdAt;
+	@Temporal(TemporalType.TIMESTAMP)
+
+	private Date createdAt;
 	
 	@Column(name="updated_at")
-    private LocalDateTime updatedAt;
+	@Temporal(TemporalType.TIMESTAMP)
+
+	private Date updatedAt;
 
     @PrePersist
     public void beforePersist() {
-        this.setCreatedAt(LocalDateTime.now());
-        this.setUpdatedAt(LocalDateTime.now());
+        this.setCreatedAt(new Date());
+        this.setUpdatedAt(new Date());
     }
 
     @PreUpdate
     public void beforeUpdate() {
-        this.setUpdatedAt(LocalDateTime.now());
+        this.setUpdatedAt(new Date());
     }
 
 }

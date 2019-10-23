@@ -3,7 +3,12 @@ package br.com.lucasmancan.services;
 import br.com.lucasmancan.dtos.ProductDTO;
 import br.com.lucasmancan.exceptions.AppNotFoundException;
 import br.com.lucasmancan.models.Product;
+import br.com.lucasmancan.models.ProductPrice;
+import br.com.lucasmancan.models.Status;
+import br.com.lucasmancan.repositories.ProductPriceRepository;
 import br.com.lucasmancan.repositories.ProductRepository;
+import com.lmax.disruptor.dsl.ProducerType;
+import org.apache.tomcat.jni.Local;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -11,8 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Date;import java.util.List;
 
 @Service
 public class ProductService extends AbstractService<Product> {
@@ -21,46 +25,44 @@ public class ProductService extends AbstractService<Product> {
     private ProductRepository repository;
 
     @Autowired
+    private ProductPriceRepository priceRepository;
+
+    @Autowired
     private ProductCategoryService productCategoryService;
 
     @Autowired
     private ModelMapper mapper;
 
-
-    private Product convert(ProductDTO dto, Product product) throws AppNotFoundException {
-
-        if (product == null) {
-            product = new Product();
-        }
-
-        product = mapper.map(dto, Product.class);
-        product.setCategory(productCategoryService.findByCode(dto.getCategory().getCode()));
-        product.setAccount(getLoggedAccount());
-        product.setUpdatedAt(LocalDateTime.now());
-
-        return product;
-    }
-
     private ProductDTO convert(Product product) {
         return mapper.map(product, ProductDTO.class);
     }
 
-    public void save(ProductDTO dto) throws AppNotFoundException {
+    public Product save(Product product) throws AppNotFoundException {
+        if(product.getId() == null){
+            product.setCreatedAt(new Date());
+            product.setAccount(getLoggedAccount());
+            product.setCreationAppUser(getPrincipal());
+        }
 
-        var product = convert(dto, null);
+        product.setUpdatedAt(new Date());
 
-        product.setCreatedAt(LocalDateTime.now());
-        product.setAccount(getLoggedAccount());
-        product.setUpdatedAt(LocalDateTime.now());
-        product.setCreationAppUser(getPrincipal());
-
-        repository.save(product);
+        return repository.save(product);
     }
 
     public void remove(Long code) throws AppNotFoundException {
         var entity = find(code);
 
-        repository.delete(entity);
+        entity.setStatus(Status.deleted);
+
+        repository.save(entity);
+    }
+
+    public void removeCategory(Long code) throws AppNotFoundException {
+        var entity = productCategoryService.findByCode(code);
+
+        entity.setStatus(Status.deleted);
+
+        productCategoryService.save(entity);
     }
 
     @Cacheable(value = "productsCache")
@@ -71,34 +73,45 @@ public class ProductService extends AbstractService<Product> {
         return domainPageable.map(this::convert);
     }
 
+
+    public List<Product> findAll(String name, String categoryName) {
+        return  repository.findAll(getLoggedAccount().getId(), name, categoryName);
+    }
+
     public Product findById(Long id) throws AppNotFoundException {
         return repository.findById(id).orElseThrow(AppNotFoundException::new);
     }
 
-    public ProductDTO findByCode(Long code) throws AppNotFoundException {
-        var product = find(code);
-
-        return convert(product);
+    public Product findByCode(Long code) throws AppNotFoundException {
+        return find(code);
     }
 
     public Product find(Long code) throws AppNotFoundException {
         return repository.findByCode(getLoggedAccount().getId(), code).orElseThrow(AppNotFoundException::new);
     }
 
-    public ProductDTO update(Long code, ProductDTO productDTO) throws AppNotFoundException {
+    public Product update(Long code, Product product) throws AppNotFoundException {
+        var old = find(code);
 
-        var product = find(code);
-
-        product = convert(productDTO, product);
-
-        product.setCode(code);
-
-        return convert(product);
+        return save(product);
     }
 
 
     @Cacheable(value = "productsCache")
     public List<Product> findAll() {
         return repository.findAll();
+    }
+
+    public ProductPrice savePrice(ProductPrice price) {
+
+        price.setCreatedAt(new Date());
+        price.setCreationAppUser(getPrincipal());
+        price.setUpdatedAt(new Date());
+
+        return priceRepository.save(price);
+    }
+
+    public List<ProductPrice> findAllPrices(Long productId) {
+        return priceRepository.findAllByProductId(productId);
     }
 }

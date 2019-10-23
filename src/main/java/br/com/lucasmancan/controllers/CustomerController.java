@@ -1,10 +1,12 @@
 package br.com.lucasmancan.controllers;
 
+import br.com.lucasmancan.dtos.AppResponse;
 import br.com.lucasmancan.dtos.CustomerDTO;
 import br.com.lucasmancan.exceptions.AppNotFoundException;
 import br.com.lucasmancan.models.Customer;
 import br.com.lucasmancan.services.CustomerService;
 import br.com.lucasmancan.utils.AppPaginator;
+import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.web.PageableDefault;
@@ -15,6 +17,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/customers")
+@Log4j
 public class CustomerController {
 
     @Autowired
@@ -22,8 +25,18 @@ public class CustomerController {
 
     @ResponseBody
     @GetMapping
-    public Page<Customer> getAll(@PageableDefault(page = 0, size = 30) @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size) {
-        return customerService.findAll(new AppPaginator(1, 15));
+    public AppResponse getAllByName(
+            @RequestParam(value="name", required = false) String name,
+            @RequestParam(value = "categoryName", required = false) String categoryName) {
+
+        try {
+
+
+            return new AppResponse("", customerService.findAll(name));
+        } catch (Exception ex) {
+            log.warn("Erro Interno" + ex);
+            return AppResponse.OOPS;
+        }
     }
 
     @ResponseBody

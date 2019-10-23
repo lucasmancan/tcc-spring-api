@@ -35,6 +35,7 @@ public class SaleController extends AbstractService<Sale> {
                               @RequestParam(value = "size", required = false) Integer size,
                               @RequestParam(value = "status", required = false) String status,
                               @RequestParam(value = "customerName", required = false) String customerName,
+                              @RequestParam(value = "employee", required = false) String employee,
                               @RequestParam(value = "upper", required = false) BigDecimal upper,
                               @RequestParam(value = "lower", required = false) BigDecimal lower) {
         try {
@@ -47,7 +48,7 @@ public class SaleController extends AbstractService<Sale> {
                 size = 30;
             }
 
-            return new AppResponse("", this.saleService.findAll(new AppPaginator(page, size), status, customerName, upper, lower));
+            return new AppResponse("", this.saleService.findAll(new AppPaginator(page, size), status, customerName,employee, upper, lower));
         } catch (Exception ex) {
             log.warn("Erro Interno" + ex);
             return AppResponse.OOPS;
@@ -58,14 +59,12 @@ public class SaleController extends AbstractService<Sale> {
     @ResponseBody
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
-    public AppResponse save(@Valid @RequestBody SaleDTO saleDTO) throws AppNotFoundException {
+    public AppResponse save(@Valid @RequestBody Sale sale) throws AppNotFoundException {
         try {
 
-            saleService.save(saleDTO);
+            saleService.save(sale);
             return new AppResponse("Venda atualizada!", false);
-        } catch (AppNotFoundException ex) {
-            return new AppResponse("Venda não encontrada!", null);
-        } catch (Exception ex) {
+        }catch (Exception ex) {
             log.warn("Erro Interno" + ex);
             return AppResponse.OOPS;
         }
@@ -75,10 +74,13 @@ public class SaleController extends AbstractService<Sale> {
     @GetMapping("/{code}")
     public AppResponse getByCode(@PathVariable("code") Long code) throws AppNotFoundException {
         try {
-            return new AppResponse("", saleService.findByCode(code));
+
+            var x = saleService.findByCode(code);
+            return new AppResponse("",x );
         } catch (AppNotFoundException ex) {
             return new AppResponse("Venda não encontrada!", null);
         } catch (Exception ex) {
+            ex.printStackTrace();
             log.warn("Erro Interno" + ex);
             return AppResponse.OOPS;
         }
@@ -86,7 +88,7 @@ public class SaleController extends AbstractService<Sale> {
 
     @ResponseBody
     @GetMapping("/summary")
-    public AppResponse getByCode() throws AppNotFoundException {
+    public AppResponse getSummary() throws AppNotFoundException {
         try {
             return new AppResponse("", saleService.getSummary());
         } catch (Exception ex) {
@@ -95,12 +97,29 @@ public class SaleController extends AbstractService<Sale> {
         }
     }
 
+    @ResponseBody
+    @GetMapping("/product-summary")
+    public AppResponse getProductSummary() throws AppNotFoundException {
+        try {
 
+            var x = saleService.getProductSummary();
+            return new AppResponse("", x);
+        } catch (Exception ex) {
+            log.warn("Erro ao buscar resumo de vendas" + ex);
+            return AppResponse.OOPS;
+        }
+    }
 
-
-
-
-
+    @ResponseBody
+    @GetMapping("/customer-summary")
+    public AppResponse getCustomerSummary() throws AppNotFoundException {
+        try {
+            return new AppResponse("", saleService.getCustomerSummary());
+        } catch (Exception ex) {
+            log.warn("Erro ao buscar resumo de vendas" + ex);
+            return AppResponse.OOPS;
+        }
+    }
     @ResponseBody
     @DeleteMapping("/{code}")
     public AppResponse delete(@PathVariable("code") Long code) throws AppNotFoundException {
@@ -119,9 +138,9 @@ public class SaleController extends AbstractService<Sale> {
 
     @ResponseBody
     @PutMapping("{code}")
-    public AppResponse update(@PathVariable("code") Long code, @RequestBody SaleDTO saleDTO) {
+    public AppResponse update(@PathVariable("code") Long code, @RequestBody Sale sale) {
         try {
-            return new AppResponse("Venda atualizada!", saleService.update(code, saleDTO));
+            return new AppResponse("Venda atualizada!", saleService.update(code, sale));
         } catch (AppNotFoundException ex) {
             return new AppResponse("Venda não encontrada!", null);
         } catch (Exception ex) {

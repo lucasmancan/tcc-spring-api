@@ -1,13 +1,18 @@
 package br.com.lucasmancan.services;
 
 import br.com.lucasmancan.dtos.AccountSummary;
+import br.com.lucasmancan.dtos.AmountByItem;
 import br.com.lucasmancan.dtos.SaleDTO;
 import br.com.lucasmancan.dtos.SaleItemDTO;
+import br.com.lucasmancan.dtos.sql.AmountByEntity;
 import br.com.lucasmancan.exceptions.AppNotFoundException;
-import br.com.lucasmancan.models.Account;
-import br.com.lucasmancan.models.Sale;
-import br.com.lucasmancan.models.SaleItem;
+import br.com.lucasmancan.models.*;
+import br.com.lucasmancan.repositories.SaleCustomerRepository;
+import br.com.lucasmancan.repositories.SaleItemRepository;
 import br.com.lucasmancan.repositories.SaleRepository;
+import lombok.extern.log4j.Log4j;
+import net.bytebuddy.matcher.CollectionErasureMatcher;
+import org.apache.tomcat.jni.Local;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -18,11 +23,17 @@ import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.List;
+import java.util.Date;import java.util.List;
 
 @Service
+@Log4j
 public class SaleService extends AbstractService<Sale> {
 
+    @Autowired
+    private SaleItemRepository saleItemRepository;
+
+    @Autowired
+    private SaleCustomerRepository customerRepository;
 
     @Autowired
     private SaleRepository repository;
@@ -33,80 +44,89 @@ public class SaleService extends AbstractService<Sale> {
     @Autowired
     private ModelMapper mapper;
 
-    public Sale convert(SaleDTO saleDTO) throws AppNotFoundException {
-
-        var sale = new Sale();
-
-        sale.setCode(saleDTO.getCode());
-        sale.setStatus(saleDTO.getStatus());
-        sale.setOtherExpenses(saleDTO.getOtherExpenses());
-        sale.setDiscount(saleDTO.getDiscount());
-        sale.setAmount(saleDTO.getAmount());
-        sale.setGrossAmount(saleDTO.getGrossAmount());
-        sale.setUpdatedAt(saleDTO.getUpdatedAt());
-
-        if (sale.getAccount() == null) {
-            sale.setAccount(getLoggedAccount());
-        }
-
-        if (sale.getEmployee() == null) {
-            sale.setEmployee(getPrincipal());
-        }
-
-        if (!CollectionUtils.isEmpty(saleDTO.getItems())) {
-
-            sale.setOtherExpenses(BigDecimal.ZERO);
-            sale.setDiscount(BigDecimal.ZERO);
-            sale.setAmount(BigDecimal.ZERO);
-            sale.setGrossAmount(BigDecimal.ZERO);
-
-            for (SaleItemDTO saleItemDTO : saleDTO.getItems()) {
-
-                final SaleItem saleItem = new SaleItem();
-
-                saleItem.setAmount(saleItemDTO.getAmount());
-                saleItem.setStatus(saleItemDTO.getStatus());
-                saleItem.setGrossAmount(saleItemDTO.getGrossAmount());
-                saleItem.setDiscount(saleItemDTO.getDiscount());
-                saleItem.setOtherExpenses(saleItemDTO.getOtherExpenses());
-                saleItem.setUnitary(saleItemDTO.getUnitary());
-                saleItem.setProduct(productService.find(saleItemDTO.getProduct().getCode()));
-
-                saleItem.setGrossAmount(saleItem.getUnitary()
-                        .multiply(new BigDecimal(saleItem.getQuantity()))
-                        .add(saleItem.getOtherExpenses()));
-
-                saleItem.setAmount(saleItem.getGrossAmount().subtract(saleItem.getDiscount()));
-
-                sale.setGrossAmount(sale.getGrossAmount().add(saleItem.getGrossAmount()));
-                sale.setAmount(sale.getAmount().add(saleItem.getAmount()));
-                sale.setDiscount(sale.getDiscount().add(saleItem.getDiscount()));
-                sale.setOtherExpenses(sale.getOtherExpenses().add(saleItem.getOtherExpenses()));
-
-                sale.getItems().add(saleItem);
-            }
-        }
-
-        return sale;
-    }
-
     public SaleDTO convert(Sale sale) {
         var saleDTO = mapper.map(sale, SaleDTO.class);
         return saleDTO;
     }
 
-    public void save(SaleDTO saleDTO) throws AppNotFoundException {
+    public Sale save(Sale sale) {
 
-        var sale = convert(saleDTO);
-
-        if (sale.getCode() != null) {
-            var savedSale = this.find(sale.getCode());
-
-            sale = this.map(sale, savedSale);
+        if(sale.getId() == null){
+            sale.setCreatedAt(new Date());
         }
 
-        repository.save(sale);
+        if (sale.getStatus() == null) {
+            sale.setStatus(Status.pending);
+        }
+
+
+        if(!CollectionUtils.isEmpty(sale.getItems())){
+            sale.setAmount(BigDecimal.ZERO);
+            sale.setDiscount(BigDecimal.ZERO);
+            sale.setGrossAmount(BigDecimal.ZERO);
+            sale.setOtherExpenses(BigDecimal.ZERO);
+
+            for(SaleItem item: sale.getItems()){
+
+
+                item = this.saveSaleItem(item);
+
+                item.setSale(sale);
+
+                sale.getGrossAmount().add(item.getGrossAmount());
+                sale.getAmount().add(item.getAmount());
+                sale.getDiscount().add(item.getDiscount());
+                sale.getOtherExpenses().add(item.getOtherExpenses());
+
+            }
+        }
+
+        if(!CollectionUtils.isEmpty(sale.getCustomers())) {
+
+            for(SaleCustomer saleCustomer: sale.getCustomers()){
+
+                saleCustomer = this.saleSaleCustomer(saleCustomer);
+
+                saleCustomer.setSale(sale);
+
+            }
+        }
+
+//        sale.setUpdatedAt(new Date());
+
+        return repository.save(sale);
     }
+
+    private SaleCustomer saleSaleCustomer(SaleCustomer saleCustomer) {
+        saleCustomer.setUpdatedAt(new Date());
+
+
+        if(saleCustomer.getStatus() == null){
+            saleCustomer.setStatus(Status.approved);
+        }
+
+        if(saleCustomer.getId() == null){
+            saleCustomer.setCreatedAt(new Date());
+        }
+
+        return saleCustomer;
+    }
+
+    private SaleItem saveSaleItem(SaleItem item) {
+        if(item.getId() == null){
+            item.setCreatedAt(new Date());
+        }
+
+        item.setGrossAmount(item.getUnitary()
+                .multiply(new BigDecimal(item.getQuantity()))
+                .add(item.getOtherExpenses()));
+
+        item.setAmount(item.getGrossAmount().subtract(item.getDiscount()));
+        item.setUpdatedAt(new Date());
+
+        return item;
+    }
+
 
     private Sale map(Sale sale, Sale oldSale) {
         sale.setId(oldSale.getId());
@@ -115,11 +135,38 @@ public class SaleService extends AbstractService<Sale> {
     }
 
 
+    public SaleItem removeItem(Long id) throws AppNotFoundException {
+
+        var saleItem = saleItemRepository.findById(id).orElseThrow(() -> new AppNotFoundException("Item not found!"));
+
+        saleItem.setStatus(Status.deleted);
+
+        return saleItemRepository.save(saleItem);
+    }
+
+    public List<SaleCustomer> listCustomers(Long saleId) throws AppNotFoundException {
+        return customerRepository.findAll(saleId);
+    }
+    public List<SaleItem> listItems(Long saleId) throws AppNotFoundException {
+        return saleItemRepository.findAll(saleId);
+    }
+
+    public SaleCustomer removeCustomer(Long id) throws AppNotFoundException {
+
+        var saleCustomer = customerRepository.findById(id).orElseThrow(() -> new AppNotFoundException("Sale customer not found not found!"));
+
+        saleCustomer.setStatus(Status.deleted);
+
+        return customerRepository.save(saleCustomer);
+    }
+
     public void remove(Long code) throws AppNotFoundException {
 
         var sale = find(code);
 
-        repository.delete(sale);
+        sale.setStatus(Status.deleted);
+
+        repository.save(sale);
     }
 
     @Cacheable(value = "salesCache")
@@ -128,8 +175,16 @@ public class SaleService extends AbstractService<Sale> {
     }
 
     @Cacheable(value = "salesCache")
-    public Page<SaleDTO> findAll(Pageable pageable, String status, String customerName, BigDecimal lower, BigDecimal upper) {
-        return repository.findAll(getLoggedAccount().getId(), pageable);
+    public List<Object[][]> findAll(Pageable pageable, String status, String customerName,String employee, BigDecimal lower, BigDecimal upper) {
+
+        return   getEntityManager().createNamedQuery("Sale.fetchAll")
+                .setParameter("accountId", getLoggedAccount().getId())
+                .setParameter("status", status)
+                .setParameter("employee", employee)
+                .setParameter("customerName", customerName)
+                .setParameter("lower", lower)
+                .setParameter("upper", upper)
+                .getResultList();
     }
 
     @Cacheable(value = "salesCache")
@@ -147,23 +202,19 @@ public class SaleService extends AbstractService<Sale> {
     }
 
     @Cacheable(value = "salesCache", key = "#code")
-    public SaleDTO findByCode(Long code) throws AppNotFoundException {
+    public Sale findByCode(Long code) throws AppNotFoundException {
 
         var sale = repository.findByCode(getLoggedAccount().getId(), code).orElseThrow(AppNotFoundException::new);
 
-        return convert(sale);
+        return sale;
     }
 
-    public SaleDTO update(Long code, SaleDTO saleDTO) throws AppNotFoundException {
-
+    public Sale update(Long code, Sale sale) throws AppNotFoundException {
         var oldSale = find(code);
-        var sale = convert(saleDTO);
 
-        sale = map(sale, oldSale);
+       sale = map(sale, oldSale);
 
-        sale = repository.save(sale);
-
-        return convert(sale);
+        return save(sale);
     }
 
     public AccountSummary getSummary() {
@@ -180,5 +231,19 @@ public class SaleService extends AbstractService<Sale> {
         accountSummary.setTotal((BigInteger) result[0][4]);
 
         return accountSummary;
+    }
+
+    public List<AmountByEntity>  getCustomerSummary() {
+
+        return getEntityManager().createNamedQuery("Sale.fetchAmountByCustomer", AmountByEntity.class)
+                .setParameter("accountId", getLoggedAccount().getId())
+                .getResultList();
+    }
+
+    public List<AmountByEntity> getProductSummary() {
+
+        return getEntityManager().createNamedQuery("Sale.fetchAmountByProduct", AmountByEntity.class)
+                .setParameter("accountId", getLoggedAccount().getId())
+                .getResultList();
     }
 }

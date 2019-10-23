@@ -2,7 +2,7 @@ package br.com.lucasmancan.models;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.util.Date;import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -48,18 +48,22 @@ public class ProductPrice  implements Serializable{
 	
 	@Column(name="start_validity")
 	@Temporal(TemporalType.TIMESTAMP)
+
 	private Date startValidity;
 	
 	@Column(name="end_validity")
 	@Temporal(TemporalType.TIMESTAMP)
+
 	private Date endValidity;
 
 	@Column(name="created_at")
 	@Temporal(TemporalType.TIMESTAMP)
+
 	private Date createdAt;
 	
 	@Column(name="updated_at")
 	@Temporal(TemporalType.TIMESTAMP)
+
 	private Date updatedAt;
 
 }

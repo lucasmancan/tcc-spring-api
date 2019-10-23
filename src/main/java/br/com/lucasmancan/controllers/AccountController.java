@@ -1,14 +1,23 @@
 package br.com.lucasmancan.controllers;
 
+import br.com.lucasmancan.dtos.AccountDTO;
+import br.com.lucasmancan.dtos.RegisterForm;
+import br.com.lucasmancan.exceptions.AppNotFoundException;
+import br.com.lucasmancan.exceptions.PasswordDoenstMatchException;
+import br.com.lucasmancan.exceptions.RegisterAlreadyExistsException;
 import br.com.lucasmancan.repositories.UserRepository;
+import br.com.lucasmancan.services.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/accounts")
 public class AccountController {
+
+	@Autowired
+	private AccountService accountService;
 
 	@Autowired
 	private UserRepository personRepository;
@@ -19,9 +28,21 @@ public class AccountController {
 		           "{\"name\":\"Jackie\",\"country\":\"China\"}]}";
 	}
 
-//    @GetMapping("/me")
-//    public ResponseEntity home() {
-//        AppUser principal = (AppUser) SecurityContextHolder.getContext().getAuthentication();
-//        return new ResponseEntity(principal, HttpStatus.OK);
-//    }
+    @GetMapping("/")
+    @ResponseBody
+    public List<AccountDTO> list() {
+
+		var accounts = accountService.findAll();
+
+
+        return accounts;
+    }
+
+
+    @PostMapping("/")
+    public void create(RegisterForm form) throws RegisterAlreadyExistsException, PasswordDoenstMatchException, AppNotFoundException {
+          accountService.register(form);
+    }
+
+
 }

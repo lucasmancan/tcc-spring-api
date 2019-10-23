@@ -7,8 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Date;import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -44,11 +43,11 @@ public class AppUserDTO {
     private Boolean expired;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-    private LocalDateTime expiredAt;
+    private Date expiredAt;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-    private LocalDateTime updatedAt;
+    private Date updatedAt;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-    private LocalDateTime loggedAt;
+    private Date loggedAt;
 }

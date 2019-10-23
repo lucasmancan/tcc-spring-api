@@ -1,5 +1,7 @@
 package br.com.lucasmancan.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.springframework.security.core.Authentication;
@@ -9,8 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Date;
+import java.util.Date;import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -59,6 +60,10 @@ public class AppUser implements Serializable, UserDetails, Authentication {
 	@Column(name = "username")
 	private String username;
 
+
+	@Column(name = "email")
+	private String email;
+
 	@OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "appUser")
 	private Set<UserEmail> emails = new HashSet<>();
 
@@ -78,23 +83,37 @@ public class AppUser implements Serializable, UserDetails, Authentication {
 	private Boolean expired;
 
 	@Column(name = "expired_at")
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
 	@Temporal(TemporalType.TIMESTAMP)
+
 	private Date expiredAt;
 
 	@Column(name = "created_at")
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
 	@Temporal(TemporalType.TIMESTAMP)
+
 	private Date createdAt;
 
-	@Column(name = "updated_at")
+	@Column(name = "upDated_at")
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
 	@Temporal(TemporalType.TIMESTAMP)
+
 	private Date updatedAt;
 
 	@Column(name = "logged_at")
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
 	@Temporal(TemporalType.TIMESTAMP)
+
 	private Date loggedAt;
 
-    @Override
 	@Transient
+	@JsonIgnore
+	private Collection<GrantedAuthority> authorities;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status")
+	private Status status;
+    @Override
     public Collection<GrantedAuthority> getAuthorities() {
         // TODO Auto-generated method stub
         var adminList = AuthorityUtils.createAuthorityList("ROLE_ADMIN", "ROLE_USER");
@@ -107,6 +126,8 @@ public class AppUser implements Serializable, UserDetails, Authentication {
     public Object getCredentials() {
         return null;
     }
+
+
 
     @Override
     public Object getDetails() {

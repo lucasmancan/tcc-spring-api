@@ -8,9 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
-@Data
+import java.util.Date;@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class SaleItemDTO {
@@ -32,5 +30,5 @@ public class SaleItemDTO {
     private BigDecimal amount;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-    private LocalDateTime updatedAt;
+    private Date updatedAt;
 }

@@ -5,17 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
-@Data
+import java.util.Date;@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class AccountDTO {
+    private Long id;
+    private String name;
 
-    private AppUserDTO admin;
-
-    private Boolean active;
-
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-    private LocalDateTime updatedAt;
 }

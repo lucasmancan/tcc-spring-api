@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -24,4 +25,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query(value = "SELECT p FROM Product p JOIN FETCH p.account LEFT JOIN FETCH p.category  c WHERE p.account.id =:accountId AND (:name is null or p.name like CONCAT('%',:name,'%')) AND (:categoryName is null or c.name like CONCAT('%',:categoryName,'%'))", countQuery = "SELECT count(p) from Product p")
     Page<Product> findAll(@Param("accountId") Long accountId, Pageable pageable, String name, String categoryName);
 
+    @Query(value = "SELECT p FROM Product p JOIN FETCH p.account LEFT JOIN FETCH p.category  c WHERE p.account.id =:accountId AND (:name is null or p.name like CONCAT('%',:name,'%')) AND (:categoryName is null or c.name like CONCAT('%',:categoryName,'%'))")
+    List<Product> findAll(Long accountId, String name, String categoryName);
 }

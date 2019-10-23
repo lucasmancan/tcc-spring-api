@@ -7,9 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
-
-@Data
+import java.util.Date;@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class AddressDTO {
@@ -36,5 +34,5 @@ public class AddressDTO {
     private String country;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-    private LocalDateTime updatedAt;
+    private Date updatedAt;
 }
