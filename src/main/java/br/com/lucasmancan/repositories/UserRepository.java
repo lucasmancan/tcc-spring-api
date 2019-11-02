@@ -9,8 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface UserRepository extends JpaRepository<AppUser, Long> {
 
-	@Query(value = "SELECT u from AppUser u JOIN FETCH u.account where u.username =:email")
-    AppUser findByEmail(String email);
+    Optional<AppUser> findByEmail(String email);
 	
 	@Query("SELECT p FROM AppUser p WHERE p.account.id =:accountId and p.code=:code")
 	Optional<AppUser> findByCode(@Param("accountId") Long accountId, @Param("code") Long Code);

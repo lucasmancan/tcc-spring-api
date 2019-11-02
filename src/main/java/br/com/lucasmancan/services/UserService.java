@@ -1,13 +1,12 @@
 package br.com.lucasmancan.services;
 
-import br.com.lucasmancan.dtos.AddressDTO;
-import br.com.lucasmancan.dtos.AppUserDTO;
-import br.com.lucasmancan.dtos.EmailDTO;
-import br.com.lucasmancan.dtos.PhoneDTO;
+import br.com.lucasmancan.dtos.*;
+import br.com.lucasmancan.exceptions.AppException;
 import br.com.lucasmancan.exceptions.AppNotFoundException;
 import br.com.lucasmancan.models.*;
 import br.com.lucasmancan.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.token.TokenService;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;import java.util.*;
@@ -21,6 +20,10 @@ public class UserService extends AbstractService<AppUser> {
 
     @Autowired
     private AddressService addressService;
+
+
+    @Autowired
+    private TokenService tokenService;
 
 
     public AppUser convert(AppUserDTO dto) {
@@ -210,8 +213,29 @@ public class UserService extends AbstractService<AppUser> {
     }
 
     public Optional<AppUser> findByAccountIdAndUserEmail(Long id, String email) {
-
         return repository.findByAccountIdAndUserEmail(id,email);
+    }
+
+    public void verifyEmail(UserAccountInformation userAccountInformation) throws AppException {
+
+        var user = repository.findByEmail(userAccountInformation.getEmail());
+
+        if(user.isPresent()){
+
+        }
+    }
+
+
+    public void verifyToken(String token) throws AppException {
+
+    }
+
+    public void signUp(UserAccountInformation userAccountInformation) throws AppException {
+
+    }
+
+    public void changePassword(PasswordConfirmation passwordConfirmation) throws AppException {
+
     }
 }
 

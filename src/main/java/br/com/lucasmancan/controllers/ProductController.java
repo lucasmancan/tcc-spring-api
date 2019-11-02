@@ -38,7 +38,6 @@ public class ProductController {
 
         try {
 
-
             return new AppResponse("", productService.findAll(name, categoryName));
         } catch (Exception ex) {
             log.warn("Erro Interno" + ex);
