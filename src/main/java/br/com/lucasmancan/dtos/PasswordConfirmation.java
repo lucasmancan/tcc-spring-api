@@ -12,4 +12,9 @@ public class PasswordConfirmation {
     private String confirmation;
 
     private String token;
+
+
+    public boolean matchPassword(){
+        return password.equals(confirmation);
+    }
 }

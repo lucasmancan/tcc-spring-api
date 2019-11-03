@@ -4,9 +4,11 @@ import br.com.lucasmancan.dtos.*;
 import br.com.lucasmancan.exceptions.AppException;
 import br.com.lucasmancan.exceptions.AppNotFoundException;
 import br.com.lucasmancan.models.*;
+import br.com.lucasmancan.repositories.AccountRepository;
+import br.com.lucasmancan.repositories.TokenRepository;
 import br.com.lucasmancan.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.token.TokenService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;import java.util.*;
@@ -21,9 +23,21 @@ public class UserService extends AbstractService<AppUser> {
     @Autowired
     private AddressService addressService;
 
+    @Autowired
+    private AccountRepository accountRepository;
 
     @Autowired
     private TokenService tokenService;
+
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private TokenRepository tokenRepository;
 
 
     public AppUser convert(AppUserDTO dto) {
@@ -222,21 +236,99 @@ public class UserService extends AbstractService<AppUser> {
 
         if(user.isPresent()){
 
+            var token = tokenService.generateToken(user.get(), 1000 * 60 * 60 * 30);
+
+            emailService.send("customer-verify-email", userAccountInformation.getEmail(), token);
         }
     }
 
 
-    public void verifyToken(String token) throws AppException {
+    public boolean verifyToken(String token) throws AppException {
 
+        Token foundToken = tokenRepository.findByToken(token).orElse(null);
+
+
+        if(foundToken == null){
+            return false;
+        }
+
+        if(foundToken.getExpiresAt() != null && foundToken.getExpiresAt().before(new Date())){
+            return false;
+        }
+
+        return true;
     }
 
     public void signUp(UserAccountInformation userAccountInformation) throws AppException {
 
+        if(!userAccountInformation.matchPassword()){
+            throw new AppException("Senhas não coincidem.");
+        }
+
+        if( repository.findByEmail(userAccountInformation.getEmail()).isPresent()){
+            throw new AppException("Usuário já existe.");
+        }
+
+        AppUser newUser = new AppUser();
+
+        newUser.setEmail(userAccountInformation.getEmail());
+        newUser.setUsername(userAccountInformation.getUsername());
+        newUser.setPassword(passwordEncoder.encode(userAccountInformation.getPassword()));
+        newUser.setStatus(Status.pending);
+        newUser.setName(userAccountInformation.getUsername());
+
+
+        newUser = repository.save(newUser);
+
+        Account account  = new Account();
+        account.setActive(true);
+        account.setCreatedAt(new Date());
+        account.setName(userAccountInformation.getUsername());
+        account.setUpdatedAt(new Date());
+        account.setAdmin(newUser);
+
+        Account account1 = accountRepository.save(account);
+
+
+        var token = tokenService.generateToken(newUser, null);
+
+        emailService.send("customer-verify-signup", newUser.getEmail(), token);
+
+    }
+
+    public void activateUser(String token) throws AppException {
+
+        var foundToken = tokenService.getToken(token);
+
+        foundToken.getUser().setStatus(Status.active);
+
+        repository.save(foundToken.getUser());
+
+        tokenService.invalidateToken(foundToken, true);
     }
 
     public void changePassword(PasswordConfirmation passwordConfirmation) throws AppException {
 
+        Token foundToken = tokenService.getToken(passwordConfirmation.getToken());
+
+        AppUser user = findById(foundToken.getUser().getId()).orElseThrow(() -> new AppException("Usuário não encontrado."));
+
+        if(!passwordConfirmation.matchPassword()){
+            throw new AppException("Senhas não coincidem.");
+        }
+
+        if( passwordEncoder.matches(user.getPassword(), passwordConfirmation.getConfirmation())){
+            throw new AppException("A nova senha não pode ser igual a anterior.");
+
+        }
+        user.setPassword(passwordEncoder.encode(passwordConfirmation.getPassword()));
+
+        tokenService.invalidateToken(foundToken, true);
+
+
+        getEntityManager().merge(user);
     }
+
 }
 
 

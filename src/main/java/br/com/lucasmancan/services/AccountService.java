@@ -24,12 +24,7 @@ public class AccountService extends AbstractService<Account> {
     @Autowired
     private AccountRepository repository;
 
-    @Autowired
-    private UserRepository userRepository;
 
-
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -64,64 +59,4 @@ public class AccountService extends AbstractService<Account> {
         return repository.findById(id).orElseThrow(AppNotFoundException::new);
     }
 
-    public void register(RegisterForm form) throws AppNotFoundException, RegisterAlreadyExistsException, PasswordDoenstMatchException {
-
-        Account account = new Account();
-        AppUser user = new AppUser();
-
-
-        if(form.getAccountId() != null){
-            account = repository.findById(form.getAccountId()).orElseThrow(() -> new AppNotFoundException("Account not found"));
-        }else{
-
-            var accountVerification = repository.findByName(form.getAccountName()).orElse(null);
-
-            if(accountVerification != null){
-                throw new RegisterAlreadyExistsException("Account already exists.", form.getAccountName());
-            }
-
-            account.setActive(true);
-            account.setCreatedAt(new Date());
-            account.setName(account.getName());
-            account.setUpdatedAt(new Date());
-        }
-
-
-            verifyUserAccount(account, form.getEmail());
-
-            user.setAccount(account);
-            user.setActive(true);
-            user.setCreatedAt(new Date());
-            user.setName(form.getName());
-            user.setDocument(form.getDocument());
-            user.setPassword(this.updatePassword(form.getPassword(), form.getPasswordConfirmation()));
-
-
-           user = userRepository.save(user);
-
-           if(form.getAccountId() == null){
-               account.setAdmin(user);
-               repository.save(account);
-           }
-    }
-
-    private void verifyUserAccount(Account account, String email) throws RegisterAlreadyExistsException {
-        if(account.getId() != null){
-          return;
-        }
-
-       var user =  userService.findByAccountIdAndUserEmail(account.getId(), email).orElse(null);
-
-        if(user != null) throw  new RegisterAlreadyExistsException("User already exists!", email);
-
-
-    }
-
-    private String updatePassword(String password, String passwordConfirmation) throws PasswordDoenstMatchException {
-        if(!password.equals(passwordConfirmation)){
-            throw new PasswordDoenstMatchException();
-        }
-
-        return passwordEncoder.encode(password);
-    }
 }
