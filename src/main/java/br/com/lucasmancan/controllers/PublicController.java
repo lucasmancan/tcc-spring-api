@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;import java.util.Date;
 
 @RestController
-@RequestMapping("/api/public-auth")
+@RequestMapping("/api/public")
 @Log4j
 public class PublicController {
 
@@ -130,7 +130,7 @@ public class PublicController {
         user.setExpired(false);
         user.setAdmin(true);
 
-        return new ResponseEntity(repository.save(user), HttpStatus.CREATED);
+        return new ResponseEntity(userRepository.save(user), HttpStatus.CREATED);
     }
 
 

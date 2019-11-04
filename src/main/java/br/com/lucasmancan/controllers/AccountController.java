@@ -39,10 +39,6 @@ public class AccountController {
     }
 
 
-    @PostMapping("/")
-    public void create(RegisterForm form) throws RegisterAlreadyExistsException, PasswordDoenstMatchException, AppNotFoundException {
-          accountService.register(form);
-    }
 
 
 }

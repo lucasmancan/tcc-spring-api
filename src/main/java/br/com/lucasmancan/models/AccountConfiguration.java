@@ -23,8 +23,7 @@ import lombok.ToString;
 @Data
 @Entity
 @Table(name="accounts_configurations")
-@EqualsAndHashCode(callSuper=false, exclude = {"account"})
-@ToString(callSuper=false, exclude = {"account"})
+
 @AllArgsConstructor
 @NoArgsConstructor
 public class AccountConfiguration {

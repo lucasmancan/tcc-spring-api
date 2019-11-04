@@ -261,11 +261,11 @@ public class UserService extends AbstractService<AppUser> {
 
     public void signUp(UserAccountInformation userAccountInformation) throws AppException {
 
-        if(!userAccountInformation.matchPassword()){
+        if(!userAccountInformation.passwordMatch()){
             throw new AppException("Senhas não coincidem.");
         }
 
-        if( repository.findByEmail(userAccountInformation.getEmail()).isPresent()){
+        if(repository.findByEmail(userAccountInformation.getEmail()).isPresent()){
             throw new AppException("Usuário já existe.");
         }
 
@@ -324,7 +324,6 @@ public class UserService extends AbstractService<AppUser> {
         user.setPassword(passwordEncoder.encode(passwordConfirmation.getPassword()));
 
         tokenService.invalidateToken(foundToken, true);
-
 
         getEntityManager().merge(user);
     }

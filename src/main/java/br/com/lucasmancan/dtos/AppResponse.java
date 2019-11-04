@@ -28,4 +28,12 @@ public class AppResponse {
         this.timestamp = new Date();
     }
 
+    public AppResponse( String message, Object data) {
+        this.success = true;
+        this.message = message;
+        this.data = data;
+        this.timestamp = new Date();
+    }
+
+
 }
