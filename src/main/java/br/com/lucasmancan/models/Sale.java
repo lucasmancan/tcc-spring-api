@@ -13,6 +13,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.LocalDateTime;
 import java.util.Date;import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -106,12 +107,10 @@ import java.util.Set;
         "where s.account_id =:accountId\n" +
         "group by p.id", resultSetMapping = "fetchAmountByCustomerResult")
 
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Sale extends SaleEntity implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id")
-    @JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
     private AppUser employee;
 
     @Id
@@ -122,11 +121,11 @@ public class Sale extends SaleEntity implements Serializable {
     @JoinColumn(name = "account_id")
     private Account account;
 
-    @JsonIgnoreProperties(value = {"sale", "hibernateLazyInitializer", "handler"})
-    @OneToMany( mappedBy = "sale", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = {"sale"})
+    @OneToMany( mappedBy = "sale", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<SaleItem> items = new HashSet<SaleItem>();
 
-    @JsonIgnoreProperties(value = {"sale", "hibernateLazyInitializer", "handler"})
+    @JsonIgnoreProperties(value = {"sale"})
     @OneToMany(mappedBy = "sale", fetch = FetchType.LAZY)
     private Set<SaleCustomer> customers = new HashSet<SaleCustomer>();
 
@@ -143,6 +142,10 @@ public class Sale extends SaleEntity implements Serializable {
     @Column(name = "other_expenses")
     private BigDecimal otherExpenses = BigDecimal.ZERO;
 
+
+    @Column(name = "additional_values")
+    private BigDecimal additionalValues = BigDecimal.ZERO;
+
     private BigDecimal discount = BigDecimal.ZERO;
 
     @Column(name = "gross_amount")
@@ -152,15 +155,12 @@ public class Sale extends SaleEntity implements Serializable {
     private BigDecimal amount = BigDecimal.ZERO;
 
     @Column(name = "created_at")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-    @Temporal(TemporalType.TIMESTAMP)
 
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-@Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
+
+    private LocalDateTime updatedAt;
 
 
 }

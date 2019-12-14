@@ -1,11 +1,13 @@
 package br.com.lucasmancan.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;@Data
 @Entity
 @Table(name = "sales_itens")
@@ -21,9 +23,9 @@ public class SaleItem extends SaleEntity implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
-    @JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
 
     private Product product;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sale_id")
@@ -54,12 +56,10 @@ public class SaleItem extends SaleEntity implements Serializable {
     private BigDecimal amount = BigDecimal.ZERO;
 
     @Column(name = "created_at")
-    @Temporal(TemporalType.TIMESTAMP)
 
-    private Date createdAt;
+private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
-    @Temporal(TemporalType.TIMESTAMP)
 
-    private Date updatedAt;
+private LocalDateTime updatedAt;
 }

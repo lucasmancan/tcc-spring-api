@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;import java.util.List;
 
 @Data
@@ -23,8 +24,7 @@ public class CustomerDTO implements Serializable {
     private String document;
     private Boolean active;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-    private Date updatedAt;
+private LocalDateTime updatedAt;
 
     private List<EmailDTO> emails;
 

@@ -9,13 +9,14 @@ import br.com.lucasmancan.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 
 @Service
 public class TokenService extends AbstractService<AppUser> {
 
-
+@Autowired
     private TokenRepository tokenRepository;
 
    public Token generateToken(AppUser user, Integer milliseconds){
@@ -26,15 +27,15 @@ public class TokenService extends AbstractService<AppUser> {
        UUID uuid = UUID.randomUUID();
 
        token.setActive(true);
-       token.setCreatedAt(new Date());
-       token.setToken(uuid.toString().substring(8));
+       token.setCreatedAt(LocalDateTime.now());
+       token.setToken(uuid.toString().substring(0, 8));
        token.setUser(user);
 
        if(milliseconds != null){
-           token.setExpiresAt(new Date(new Date().getTime() + milliseconds));
+           token.setExpiresAt(LocalDateTime.now().plusSeconds(milliseconds / 1000));
        }
 
-       return getEntityManager().merge(token);
+       return tokenRepository.save(token);
    }
 
     public Token invalidateToken(Token token, boolean idUsed){
@@ -42,10 +43,10 @@ public class TokenService extends AbstractService<AppUser> {
         token.setActive(false);
 
         if(idUsed){
-            token.setUsedAt(new Date());
+            token.setUsedAt(LocalDateTime.now());
         }
 
-        return getEntityManager().merge(token);
+        return tokenRepository.save(token);
     }
 
 

@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -54,16 +55,14 @@ public class Customer implements Serializable {
 	private Status status;
 
 	@Column(name="created_at")
-	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-	@Temporal(TemporalType.TIMESTAMP)
 
-	private Date createdAt;
+
+	private LocalDateTime createdAt;
 	
 	@Column(name="updated_at")
-	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-	@Temporal(TemporalType.TIMESTAMP)
 
-	private Date updatedAt;
+
+	private LocalDateTime updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creation_user_id")

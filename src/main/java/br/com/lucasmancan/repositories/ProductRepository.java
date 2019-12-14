@@ -15,8 +15,12 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    @Query("SELECT p FROM Product p JOIN fetch p.category JOIN FETCH p.account JOIN FETCH p.creationAppUser WHERE p.account.id =:accountId and p.code=:code")
+    @Query("SELECT p FROM Product p LEFT JOIN fetch p.category LEFT JOIN FETCH p.account  WHERE p.account.id =:accountId and p.code=:code")
     Optional<Product> findByCode(@Param("accountId") Long accountId, @Param("code") Long Code);
+
+
+    @Query("SELECT p FROM Product p  WHERE  p.id=:id")
+    Optional<Product> findById(@Param("id") Long id);
 
 //    @Query(value = "SELECT p FROM Product p JOIN FETCH p.category c " +
 //            " WHERE p.account.id =:accountId AND (:name is null or p.name=:name) AND (:categoryName is null or c.description =:categoryName)", countQuery = "select cp) from Product p ")

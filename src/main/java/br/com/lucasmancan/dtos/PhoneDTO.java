@@ -24,6 +24,5 @@ public class PhoneDTO {
     @NotNull
     public ContactType contactType;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-    public Date updatedAt;
+public Date updatedAt;
 }

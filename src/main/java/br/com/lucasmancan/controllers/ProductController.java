@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 
 import javax.validation.Valid;
 
@@ -63,9 +64,8 @@ public class ProductController {
     @ResponseStatus(code = HttpStatus.CREATED)
     public AppResponse save(@Valid @RequestBody Product product) {
         try {
-            productService.save(product);
-
-            return new AppResponse("Produto atualizado!", null);
+           var x =  productService.save(product);
+            return new AppResponse("Produto atualizado!", x);
         } catch (AppNotFoundException ex) {
             return new AppResponse("Produto não encontrado!", null);
         } catch (Exception ex) {

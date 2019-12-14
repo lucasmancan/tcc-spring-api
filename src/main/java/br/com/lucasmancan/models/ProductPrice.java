@@ -2,6 +2,7 @@ package br.com.lucasmancan.models;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;import java.util.Date;
 
 import javax.persistence.Column;
@@ -25,8 +26,8 @@ import lombok.ToString;
 @Data
 @Entity
 @Table(name="products_prices")
-@EqualsAndHashCode(callSuper=false, exclude = {"account", "category", "creationAppUser"})
-@ToString(callSuper=false, exclude = {"account", "parentCategory", "creationAppUser"})
+@EqualsAndHashCode(callSuper=false, exclude = {"account", "product"})
+@ToString(callSuper=false, exclude = {"account", "product"})
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductPrice  implements Serializable{
@@ -47,23 +48,15 @@ public class ProductPrice  implements Serializable{
 	private BigDecimal price;
 	
 	@Column(name="start_validity")
-	@Temporal(TemporalType.TIMESTAMP)
-
-	private Date startValidity;
+	private LocalDateTime startValidity;
 	
 	@Column(name="end_validity")
-	@Temporal(TemporalType.TIMESTAMP)
-
-	private Date endValidity;
+	private LocalDateTime endValidity;
 
 	@Column(name="created_at")
-	@Temporal(TemporalType.TIMESTAMP)
-
-	private Date createdAt;
+	private LocalDateTime createdAt;
 	
 	@Column(name="updated_at")
-	@Temporal(TemporalType.TIMESTAMP)
-
-	private Date updatedAt;
+	private LocalDateTime updatedAt;
 
 }

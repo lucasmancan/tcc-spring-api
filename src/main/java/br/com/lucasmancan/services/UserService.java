@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Date;import java.util.*;
 
 
@@ -50,59 +51,59 @@ public class UserService extends AbstractService<AppUser> {
             user = new AppUser();
         }
 
-        user.setActive(dto.getActive());
-        user.setDocument(dto.getDocument());
-        user.setName(dto.getName());
-        user.setType(dto.getType());
-
-        for (AddressDTO addressDTO : dto.getAddresses()) {
-
-            final var userAddress = new UserAddress();
-            userAddress.setCity(addressDTO.getCity());
-            userAddress.setCountry(addressDTO.getCountry());
-            userAddress.setState(addressDTO.getState());
-            userAddress.setStreet(addressDTO.getStreet());
-            userAddress.setNumber(addressDTO.getNumber());
-            userAddress.setZipCode(addressDTO.getZipCode());
-            userAddress.setAppUser(user);
-
-            if (user.getAddresses() == null) {
-                user.setAddresses(new HashSet<>());
-            }
-
-            user.getAddresses().add(userAddress);
-        }
-
-        for (PhoneDTO phoneDTO : dto.getPhones()) {
-            final var userPhone = new UserPhone();
-
-            userPhone.setAreaCode(phoneDTO.getAreaCode());
-            userPhone.setCountryCode(phoneDTO.getCountryCode());
-            userPhone.setPhoneNumber(phoneDTO.getPhoneNumber());
-            userPhone.setType(phoneDTO.getContactType());
-            userPhone.setAppUser(user);
-
-            if (user.getPhones() == null) {
-                user.setPhones(new HashSet<>());
-            }
-
-            user.getPhones().add(userPhone);
-        }
-
-
-        for (EmailDTO emailDTO : dto.getEmails()) {
-            final var userEmail = new UserEmail();
-
-            userEmail.setAppUser(user);
-            userEmail.setEmail(emailDTO.getEmail());
-            userEmail.setType(emailDTO.getContactType());
-
-            if (user.getEmails() == null) {
-                user.setEmails(new HashSet<>());
-            }
-
-            user.getEmails().add(userEmail);
-        }
+//        user.setActive(dto.getActive());
+//        user.setDocument(dto.getDocument());
+//        user.setName(dto.getName());
+//        user.setType(dto.getType());
+//
+//        for (AddressDTO addressDTO : dto.getAddresses()) {
+//
+//            final var userAddress = new UserAddress();
+//            userAddress.setCity(addressDTO.getCity());
+//            userAddress.setCountry(addressDTO.getCountry());
+//            userAddress.setState(addressDTO.getState());
+//            userAddress.setStreet(addressDTO.getStreet());
+//            userAddress.setNumber(addressDTO.getNumber());
+//            userAddress.setZipCode(addressDTO.getZipCode());
+//            userAddress.setAppUser(user);
+//
+//            if (user.getAddresses() == null) {
+//                user.setAddresses(new HashSet<>());
+//            }
+//
+//            user.getAddresses().add(userAddress);
+//        }
+//
+//        for (PhoneDTO phoneDTO : dto.getPhones()) {
+//            final var userPhone = new UserPhone();
+//
+//            userPhone.setAreaCode(phoneDTO.getAreaCode());
+//            userPhone.setCountryCode(phoneDTO.getCountryCode());
+//            userPhone.setPhoneNumber(phoneDTO.getPhoneNumber());
+//            userPhone.setType(phoneDTO.getContactType());
+//            userPhone.setAppUser(user);
+//
+//            if (user.getPhones() == null) {
+//                user.setPhones(new HashSet<>());
+//            }
+//
+//            user.getPhones().add(userPhone);
+//        }
+//
+//
+//        for (EmailDTO emailDTO : dto.getEmails()) {
+//            final var userEmail = new UserEmail();
+//
+//            userEmail.setAppUser(user);
+//            userEmail.setEmail(emailDTO.getEmail());
+//            userEmail.setType(emailDTO.getContactType());
+//
+//            if (user.getEmails() == null) {
+//                user.setEmails(new HashSet<>());
+//            }
+//
+//            user.getEmails().add(userEmail);
+//        }
 
 
         return user;
@@ -111,58 +112,58 @@ public class UserService extends AbstractService<AppUser> {
     public AppUserDTO convert(AppUser user) {
 
         var dto = new AppUserDTO();
-
-        dto.setActive(user.getActive());
-        dto.setDocument(user.getDocument());
-        dto.setName(user.getName());
-        dto.setType(user.getType());
-
-        for (UserAddress address : user.getAddresses()) {
-            final var userAddress = new AddressDTO();
-
-            userAddress.setCity(address.getCity());
-            userAddress.setCountry(address.getCountry());
-            userAddress.setState(address.getState());
-            userAddress.setStreet(address.getStreet());
-            userAddress.setNumber(address.getNumber());
-            userAddress.setZipCode(address.getZipCode());
-
-            if (user.getAddresses() == null) {
-                dto.setAddresses(new ArrayList<AddressDTO>());
-            }
-
-            dto.getAddresses().add(userAddress);
-        }
-
-        for (UserPhone userPhone : user.getPhones()) {
-            final var phoneDTO = new PhoneDTO();
-
-            phoneDTO.setAreaCode(userPhone.getAreaCode());
-            phoneDTO.setCountryCode(userPhone.getCountryCode());
-            phoneDTO.setPhoneNumber(userPhone.getPhoneNumber());
-            phoneDTO.setContactType(userPhone.getType());
-
-            if (dto.getPhones() == null) {
-                dto.setPhones(new ArrayList<>());
-            }
-
-            dto.getPhones().add(phoneDTO);
-        }
-
-
-        for (UserEmail userEmail : user.getEmails()) {
-            final var emailDTO = new EmailDTO();
-
-
-            emailDTO.setEmail(userEmail.getEmail());
-            emailDTO.setContactType(userEmail.getType());
-
-            if (dto.getEmails() == null) {
-                dto.setEmails(new ArrayList<>());
-            }
-
-            dto.getEmails().add(emailDTO);
-        }
+//
+//        dto.setActive(user.getActive());
+//        dto.setDocument(user.getDocument());
+//        dto.setName(user.getName());
+//        dto.setType(user.getType());
+//
+//        for (UserAddress address : user.getAddresses()) {
+//            final var userAddress = new AddressDTO();
+//
+//            userAddress.setCity(address.getCity());
+//            userAddress.setCountry(address.getCountry());
+//            userAddress.setState(address.getState());
+//            userAddress.setStreet(address.getStreet());
+//            userAddress.setNumber(address.getNumber());
+//            userAddress.setZipCode(address.getZipCode());
+//
+//            if (user.getAddresses() == null) {
+//                dto.setAddresses(new ArrayList<AddressDTO>());
+//            }
+//
+//            dto.getAddresses().add(userAddress);
+//        }
+//
+//        for (UserPhone userPhone : user.getPhones()) {
+//            final var phoneDTO = new PhoneDTO();
+//
+//            phoneDTO.setAreaCode(userPhone.getAreaCode());
+//            phoneDTO.setCountryCode(userPhone.getCountryCode());
+//            phoneDTO.setPhoneNumber(userPhone.getPhoneNumber());
+//            phoneDTO.setContactType(userPhone.getType());
+//
+//            if (dto.getPhones() == null) {
+//                dto.setPhones(new ArrayList<>());
+//            }
+//
+//            dto.getPhones().add(phoneDTO);
+//        }
+//
+//
+//        for (UserEmail userEmail : user.getEmails()) {
+//            final var emailDTO = new EmailDTO();
+//
+//
+//            emailDTO.setEmail(userEmail.getEmail());
+//            emailDTO.setContactType(userEmail.getType());
+//
+//            if (dto.getEmails() == null) {
+//                dto.setEmails(new ArrayList<>());
+//            }
+//
+//            dto.getEmails().add(emailDTO);
+//        }
 
         return dto;
     }
@@ -177,7 +178,7 @@ public class UserService extends AbstractService<AppUser> {
         }
 
         user.setAccount(getLoggedAccount());
-        user.setUpdatedAt(new Date());
+        user.setUpdatedAt(LocalDateTime.now());
         user = repository.save(user);
 
         return convert(user);
@@ -252,7 +253,7 @@ public class UserService extends AbstractService<AppUser> {
             return false;
         }
 
-        if(foundToken.getExpiresAt() != null && foundToken.getExpiresAt().before(new Date())){
+        if(foundToken.getExpiresAt() != null && foundToken.getExpiresAt().isBefore(LocalDateTime.now())){
             return false;
         }
 
@@ -275,6 +276,7 @@ public class UserService extends AbstractService<AppUser> {
         newUser.setUsername(userAccountInformation.getUsername());
         newUser.setPassword(passwordEncoder.encode(userAccountInformation.getPassword()));
         newUser.setStatus(Status.pending);
+        newUser.setActive(false);
         newUser.setName(userAccountInformation.getUsername());
 
 
@@ -282,13 +284,16 @@ public class UserService extends AbstractService<AppUser> {
 
         Account account  = new Account();
         account.setActive(true);
-        account.setCreatedAt(new Date());
+        account.setCreatedAt(LocalDateTime.now());
         account.setName(userAccountInformation.getUsername());
-        account.setUpdatedAt(new Date());
+        account.setUpdatedAt(LocalDateTime.now());
         account.setAdmin(newUser);
 
         Account account1 = accountRepository.save(account);
 
+        newUser.setAccount(account);
+
+        newUser = repository.save(newUser);
 
         var token = tokenService.generateToken(newUser, null);
 
@@ -301,6 +306,7 @@ public class UserService extends AbstractService<AppUser> {
         var foundToken = tokenService.getToken(token);
 
         foundToken.getUser().setStatus(Status.active);
+        foundToken.getUser().setActive(true);
 
         repository.save(foundToken.getUser());
 
@@ -325,7 +331,7 @@ public class UserService extends AbstractService<AppUser> {
 
         tokenService.invalidateToken(foundToken, true);
 
-        getEntityManager().merge(user);
+        repository.save(user);
     }
 
 }

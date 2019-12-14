@@ -1,18 +1,17 @@
 package br.com.lucasmancan.services;
 
 import br.com.lucasmancan.dtos.AccountSummary;
-import br.com.lucasmancan.dtos.AmountByItem;
 import br.com.lucasmancan.dtos.SaleDTO;
-import br.com.lucasmancan.dtos.SaleItemDTO;
 import br.com.lucasmancan.dtos.sql.AmountByEntity;
 import br.com.lucasmancan.exceptions.AppNotFoundException;
-import br.com.lucasmancan.models.*;
+import br.com.lucasmancan.models.Sale;
+import br.com.lucasmancan.models.SaleCustomer;
+import br.com.lucasmancan.models.SaleItem;
+import br.com.lucasmancan.models.Status;
 import br.com.lucasmancan.repositories.SaleCustomerRepository;
 import br.com.lucasmancan.repositories.SaleItemRepository;
 import br.com.lucasmancan.repositories.SaleRepository;
 import lombok.extern.log4j.Log4j;
-import net.bytebuddy.matcher.CollectionErasureMatcher;
-import org.apache.tomcat.jni.Local;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -23,7 +22,8 @@ import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Date;import java.util.List;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Log4j
@@ -49,56 +49,77 @@ public class SaleService extends AbstractService<Sale> {
         return saleDTO;
     }
 
-    public Sale save(Sale sale) {
+    public Sale save(Sale sale) throws AppNotFoundException {
 
         if(sale.getId() == null){
-            sale.setCreatedAt(new Date());
+            sale.setCreatedAt(LocalDateTime.now());
+            sale.setEmployee(getPrincipal());
+            sale.setAccount(getLoggedAccount());
         }
 
         if (sale.getStatus() == null) {
             sale.setStatus(Status.pending);
         }
 
+        if(sale.getAdditionalValues() == null){
+            sale.setAdditionalValues(BigDecimal.ZERO);
+        }
+
+        if(sale.getDiscount() == null){
+            sale.setDiscount(BigDecimal.ZERO);
+        }
+
+        if(sale.getOtherExpenses() == null){
+            sale.setOtherExpenses(BigDecimal.ZERO);
+        }
+
+        sale.setAmount(BigDecimal.ZERO);
+        sale.setGrossAmount(BigDecimal.ZERO);
 
         if(!CollectionUtils.isEmpty(sale.getItems())){
-            sale.setAmount(BigDecimal.ZERO);
             sale.setDiscount(BigDecimal.ZERO);
+
+            sale.setAmount(BigDecimal.ZERO);
             sale.setGrossAmount(BigDecimal.ZERO);
             sale.setOtherExpenses(BigDecimal.ZERO);
 
             for(SaleItem item: sale.getItems()){
-
-
                 item = this.saveSaleItem(item);
 
                 item.setSale(sale);
 
-                sale.getGrossAmount().add(item.getGrossAmount());
-                sale.getAmount().add(item.getAmount());
-                sale.getDiscount().add(item.getDiscount());
-                sale.getOtherExpenses().add(item.getOtherExpenses());
-
+                sale.setGrossAmount(sale.getGrossAmount().add(item.getGrossAmount()));;
+                sale.setDiscount(sale.getDiscount().add(item.getDiscount()));
+                sale.setOtherExpenses(sale.getOtherExpenses().add(item.getOtherExpenses()));
             }
         }
+
+
+        sale.setAmount(sale.getGrossAmount().subtract(sale.getDiscount()).subtract(sale.getOtherExpenses()).add(sale.getAdditionalValues()));
 
         if(!CollectionUtils.isEmpty(sale.getCustomers())) {
-
             for(SaleCustomer saleCustomer: sale.getCustomers()){
-
                 saleCustomer = this.saleSaleCustomer(saleCustomer);
-
                 saleCustomer.setSale(sale);
-
             }
         }
 
-//        sale.setUpdatedAt(new Date());
+        sale.setUpdatedAt(LocalDateTime.now());
 
-        return repository.save(sale);
+
+        if(sale.getAccount() == null){
+            sale.setAccount(getLoggedAccount());
+        }
+
+        sale = repository.save(sale);
+
+        getEntityManager().detach(sale);
+
+        return repository.fetchAllById(sale.getId()).orElseThrow(AppNotFoundException::new);
     }
 
     private SaleCustomer saleSaleCustomer(SaleCustomer saleCustomer) {
-        saleCustomer.setUpdatedAt(new Date());
+        saleCustomer.setUpdatedAt(LocalDateTime.now());
 
 
         if(saleCustomer.getStatus() == null){
@@ -106,7 +127,7 @@ public class SaleService extends AbstractService<Sale> {
         }
 
         if(saleCustomer.getId() == null){
-            saleCustomer.setCreatedAt(new Date());
+            saleCustomer.setCreatedAt(LocalDateTime.now());
         }
 
         return saleCustomer;
@@ -114,15 +135,17 @@ public class SaleService extends AbstractService<Sale> {
 
     private SaleItem saveSaleItem(SaleItem item) {
         if(item.getId() == null){
-            item.setCreatedAt(new Date());
+            item.setCreatedAt(LocalDateTime.now());
         }
 
-        item.setGrossAmount(item.getUnitary()
+
+        item.setUnitary(item.getProduct().getPrice());
+        item.setGrossAmount(item.getProduct().getPrice()
                 .multiply(new BigDecimal(item.getQuantity()))
                 .add(item.getOtherExpenses()));
 
         item.setAmount(item.getGrossAmount().subtract(item.getDiscount()));
-        item.setUpdatedAt(new Date());
+        item.setUpdatedAt(LocalDateTime.now());
 
         return item;
     }
@@ -171,20 +194,28 @@ public class SaleService extends AbstractService<Sale> {
 
     @Cacheable(value = "salesCache")
     public Page<SaleDTO> findAll(Pageable pageable) {
-        return repository.findAll(getLoggedAccount().getId(), pageable);
+//        return repository.findAll(getLoggedAccount().getId(), pageable);
+
+        return null;
     }
 
-    @Cacheable(value = "salesCache")
-    public List<Object[][]> findAll(Pageable pageable, String status, String customerName,String employee, BigDecimal lower, BigDecimal upper) {
+//    @Cacheable(value = "salesCache")
+    public Page<SaleDTO> findAll(Pageable pageable, String status, String customerName, String employee) {
 
-        return   getEntityManager().createNamedQuery("Sale.fetchAll")
-                .setParameter("accountId", getLoggedAccount().getId())
-                .setParameter("status", status)
-                .setParameter("employee", employee)
-                .setParameter("customerName", customerName)
-                .setParameter("lower", lower)
-                .setParameter("upper", upper)
-                .getResultList();
+//
+//
+//        List x =   getEntityManager().createNamedQuery("Sale.fetchAll")
+//                .setParameter("accountId", getLoggedAccount().getId())
+//                .setParameter("status", status)
+//                .setParameter("employee", employee)
+//                .setParameter("customerName", customerName)
+//                .setParameter("lower", lower)
+//                .setParameter("upper", upper)
+//                .getResultList();
+
+        Status statusw = status == null ? null : Status.valueOf(status);
+
+        return repository.findAll(getLoggedAccount().getId(), statusw, pageable);
     }
 
     @Cacheable(value = "salesCache")

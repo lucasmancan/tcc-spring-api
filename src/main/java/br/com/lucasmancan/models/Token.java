@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -32,22 +33,18 @@ public class Token {
 	private Boolean active;
 	
 	@Column(name="created_at")
-	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdAt;
+
+	private LocalDateTime createdAt;
 
 	@Column(name="expires_at")
-	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date expiresAt;
+
+	private LocalDateTime expiresAt;
 	
 	@Column(name="updated_at")
-	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date updatedAt;
+
+	private LocalDateTime updatedAt;
 
 	@Column(name="used_at")
-	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date usedAt;
+
+	private LocalDateTime usedAt;
 }

@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -38,11 +39,11 @@ public class UserPhone implements Serializable{
 	private String phoneNumber;
 	
 	@Column(name="created_at")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdAt;
+
+	private LocalDateTime createdAt;
 	
 	@Column(name="updated_at")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date updatedAt;
+
+	private LocalDateTime updatedAt;
 	
 }

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -31,14 +32,12 @@ public class MessageTemplate {
 //    private Boolean active;
 
     @Column(name="created_at")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+
+    private LocalDateTime createdAt;
 
     @Column(name="updated_at")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-    @Temporal(TemporalType.TIMESTAMP)
 
-    private Date updatedAt;
+
+    private LocalDateTime updatedAt;
 
 }

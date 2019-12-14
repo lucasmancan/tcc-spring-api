@@ -1,15 +1,21 @@
 package br.com.lucasmancan.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;@Data
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.Date;
+
+@Data
 @Entity
 @Table(name="products")
-@EqualsAndHashCode(callSuper=false, exclude = {"account", "category", "creationAppUser"})
-@ToString(callSuper=false, exclude = {"account", "category", "creationAppUser"})
+@EqualsAndHashCode(callSuper=false, exclude = {"account", "category"})
+@ToString(callSuper=false, exclude = {"account", "category"})
 @AllArgsConstructor
 @NoArgsConstructor
 public class Product  implements Serializable{
@@ -24,14 +30,12 @@ public class Product  implements Serializable{
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status")
+	@JsonIgnore
 	private Status status;
 
 	private Long code;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn( name ="creation_user_id")
-
-	private AppUser creationAppUser;
+	private BigDecimal price;
 
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
@@ -43,24 +47,23 @@ public class Product  implements Serializable{
 	private String description;
 
 	@Column(name="created_at")
-	@Temporal(TemporalType.TIMESTAMP)
 
-	private Date createdAt;
+private LocalDateTime createdAt;
 	
 	@Column(name="updated_at")
-	@Temporal(TemporalType.TIMESTAMP)
 
-	private Date updatedAt;
+private LocalDateTime updatedAt;
 
     @PrePersist
     public void beforePersist() {
-        this.setCreatedAt(new Date());
-        this.setUpdatedAt(new Date());
+        this.setCreatedAt(LocalDateTime.now());
+        this.setUpdatedAt(LocalDateTime.now());
     }
 
     @PreUpdate
     public void beforeUpdate() {
-        this.setUpdatedAt(new Date());
-    }
+		this.setUpdatedAt(LocalDateTime.now());
+
+	}
 
 }

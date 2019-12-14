@@ -4,15 +4,22 @@ import br.com.lucasmancan.models.*;
 import br.com.lucasmancan.repositories.*;
 import br.com.lucasmancan.services.AccountService;
 import br.com.lucasmancan.services.CustomerService;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.context.annotation.Bean;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;import java.util.Date;
 
 @SpringBootApplication
@@ -38,6 +45,15 @@ public class VendasApiApplication implements CommandLineRunner {
     @Autowired
     private CustomerService customerRepository;
 
+
+    @Bean(name = "OBJECT_MAPPER_BEAN")
+    public ObjectMapper jsonObjectMapper() {
+        return Jackson2ObjectMapperBuilder.json()
+                .serializationInclusion(JsonInclude.Include.NON_NULL) // Don’t include null values
+                .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS) //ISODate
+                .modules(new JSR310Module())
+                .build();
+    }
 
     public static void main(String[] args) {
         SpringApplication.run(VendasApiApplication.class, args);
@@ -70,7 +86,6 @@ public class VendasApiApplication implements CommandLineRunner {
             user.setAccount(account);
             user.setActive(true);
             user.setExpired(false);
-            user.setAdmin(true);
 
 
             user = userRepository.save(user);
@@ -87,7 +102,7 @@ public class VendasApiApplication implements CommandLineRunner {
         if (account == null) {
             account = new Account();
             account.setActive(true);
-            account.setCreatedAt(new Date());
+            account.setCreatedAt(LocalDateTime.now());
 
             account = accountRepository.save(account);
         }
@@ -136,7 +151,6 @@ public class VendasApiApplication implements CommandLineRunner {
             product = new Product();
             product.setCategory(createCategory());
             product.setAccount(createAccount());
-            product.setCreationAppUser(createUser());
             product.setDescription("" + Math.random() * 19999999);
             product.setName("" + Math.random() * 19999999);
 
@@ -154,7 +168,6 @@ public class VendasApiApplication implements CommandLineRunner {
 
             product = new ProductCategory();
             product.setAccount(createAccount());
-            product.setCreationAppUser(createUser());
             product.setDescription("" + Math.random() * 19999999);
             product.setName("" + Math.random() * 19999999);
 

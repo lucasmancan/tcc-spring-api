@@ -1,17 +1,19 @@
 package br.com.lucasmancan.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
 @Entity
 @Table(name="products_categories")
-@EqualsAndHashCode(callSuper = false, exclude = {"account", "parentCategory", "creationAppUser"})
-@ToString(callSuper=false, exclude = {"account", "parentCategory", "creationAppUser"})
+@EqualsAndHashCode(callSuper = false, exclude = {"account", "parentCategory"})
+@ToString(exclude = {"account", "parentCategory"})
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductCategory  implements Serializable{
@@ -26,22 +28,13 @@ public class ProductCategory  implements Serializable{
 
     private Long code;
 
-
-
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status")
+	@JsonIgnore
 	private Status status;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn( name ="creation_user_id")
-	@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
-
-	private AppUser creationAppUser;
-
-	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn( name ="parent_id")
-	@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
-
 	private ProductCategory parentCategory;
 	
 	private String name;
@@ -49,13 +42,11 @@ public class ProductCategory  implements Serializable{
 	private String description;
 
 	@Column(name="created_at")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdAt;
+
+	private LocalDateTime createdAt;
 	
 	@Column(name="updated_at")
-	@Temporal(TemporalType.TIMESTAMP)
 
-
-	private Date updatedAt;
+	private LocalDateTime updatedAt;
 
 }

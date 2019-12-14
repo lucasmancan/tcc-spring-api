@@ -15,39 +15,9 @@ import java.util.Date;import java.util.List;
 public class AppUserDTO {
 
     private Long code;
-
-    @NotNull
-    private String name;
-
-    private String profileImage;
-
-    private String coverImage;
-
-    private PersonType type;
-
-    private List<EmailDTO> emails;
-
-    private List<PhoneDTO> phones;
-
-    private List<AddressDTO> addresses;
-
-    @NotNull
-    private String document;
-
-    @NotNull
-    private String username;
+    private String email;
 
     private String password;
-    private Boolean active;
-    private Boolean admin;
-    private Boolean expired;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-    private Date expiredAt;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-    private Date updatedAt;
-
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-    private Date loggedAt;
 }

@@ -1,24 +1,16 @@
 package br.com.lucasmancan.dtos;
 
 import br.com.lucasmancan.models.Sale;
-import br.com.lucasmancan.models.SaleCustomer;
-import br.com.lucasmancan.models.SaleItem;
 import br.com.lucasmancan.models.Status;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.modelmapper.ModelMapper;
-import org.springframework.util.CollectionUtils;
 
 import javax.persistence.Cacheable;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -39,8 +31,7 @@ public class SaleDTO implements Serializable {
     private BigDecimal amount;
 
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-    private Date updatedAt;
+private LocalDateTime updatedAt;
 
     public SaleDTO(Sale sale) {
         this.setCode(sale.getCode());

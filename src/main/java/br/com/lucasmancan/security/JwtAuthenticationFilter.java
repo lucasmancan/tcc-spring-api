@@ -1,5 +1,6 @@
 package br.com.lucasmancan.security;
 
+import br.com.lucasmancan.dtos.AppUserDTO;
 import br.com.lucasmancan.models.AppUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
@@ -39,10 +40,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
 		try {
 			/*Converte o Obj login do FRONT*/
-			AppUser user = new ObjectMapper().readValue(request.getInputStream(), AppUser.class);
+			AppUserDTO user = new ObjectMapper().readValue(request.getInputStream(), AppUserDTO.class);
+
+
 
 			return this.authenticationManager
-					.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword(), Collections.emptyList()));
+					.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword(), Collections.emptyList()));
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
@@ -72,7 +75,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 				.setHeaderParam("typ", SecurityConstants.TOKEN_TYPE)
 				.setIssuer(SecurityConstants.TOKEN_ISSUER)
 				.setAudience(SecurityConstants.TOKEN_AUDIENCE)
-				.setSubject(user.getUsername())
+				.setSubject(user.getEmail())
 //				.setExpiration(new Date(System.currentTimeMillis() + 864000000L))
 				.claim("roles", roles)
 				.compact();

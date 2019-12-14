@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -20,12 +21,11 @@ public class ProductCategoryService extends AbstractService<ProductCategory> {
     public ProductCategory save(ProductCategory entity) {
 
         if (entity.getCode() == null) {
-            entity.setCreatedAt(new Date());
+            entity.setCreatedAt(LocalDateTime.now());
             entity.setAccount(getLoggedAccount());
         }
 
-        entity.setUpdatedAt(new Date());
-        entity.setCreationAppUser(getPrincipal());
+        entity.setUpdatedAt(LocalDateTime.now());
 
         return repository.save(entity);
     }

@@ -1,5 +1,6 @@
 package br.com.lucasmancan.models;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -40,7 +41,7 @@ public class AccountConfiguration {
 	private Boolean enabledNotification;
 		
 	@Column(name="updated_at")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date updatedAt;
+
+	private LocalDateTime updatedAt;
 
 }

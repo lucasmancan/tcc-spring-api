@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Date;import java.util.List;
 
 @Service
@@ -39,14 +40,18 @@ public class ProductService extends AbstractService<Product> {
 
     public Product save(Product product) throws AppNotFoundException {
         if(product.getId() == null){
-            product.setCreatedAt(new Date());
+            product.setCreatedAt(LocalDateTime.now());
             product.setAccount(getLoggedAccount());
-            product.setCreationAppUser(getPrincipal());
+            product.setStatus(Status.active);
         }
 
-        product.setUpdatedAt(new Date());
+        product.setUpdatedAt(LocalDateTime.now());
 
-        return repository.save(product);
+        var x =  repository.save(product);
+
+        getEntityManager().detach(x);
+
+        return this.findById(x.getId());
     }
 
     public void remove(Long code) throws AppNotFoundException {
@@ -104,9 +109,9 @@ public class ProductService extends AbstractService<Product> {
 
     public ProductPrice savePrice(ProductPrice price) {
 
-        price.setCreatedAt(new Date());
+        price.setCreatedAt(LocalDateTime.now());
         price.setCreationAppUser(getPrincipal());
-        price.setUpdatedAt(new Date());
+        price.setUpdatedAt(LocalDateTime.now());
 
         return priceRepository.save(price);
     }

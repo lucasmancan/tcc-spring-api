@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;@Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,6 +21,5 @@ public class ProductCategoryDTO implements Serializable {
     @NotNull
     private String description;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-    private Date updatedAt;
+private LocalDateTime updatedAt;
 }

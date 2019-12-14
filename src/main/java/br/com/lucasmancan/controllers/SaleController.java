@@ -4,6 +4,7 @@ import br.com.lucasmancan.dtos.AppResponse;
 import br.com.lucasmancan.dtos.SaleDTO;
 import br.com.lucasmancan.exceptions.AppNotFoundException;
 import br.com.lucasmancan.models.Sale;
+import br.com.lucasmancan.models.Status;
 import br.com.lucasmancan.services.AbstractService;
 import br.com.lucasmancan.services.SaleService;
 import br.com.lucasmancan.utils.AppPaginator;
@@ -17,6 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.Objects;
+
+import static br.com.lucasmancan.models.Status.active;
+import static br.com.lucasmancan.models.Status.inactive;
 
 @RestController
 @RequestMapping("/api/sales")
@@ -35,9 +39,8 @@ public class SaleController extends AbstractService<Sale> {
                               @RequestParam(value = "size", required = false) Integer size,
                               @RequestParam(value = "status", required = false) String status,
                               @RequestParam(value = "customerName", required = false) String customerName,
-                              @RequestParam(value = "employee", required = false) String employee,
-                              @RequestParam(value = "upper", required = false) BigDecimal upper,
-                              @RequestParam(value = "lower", required = false) BigDecimal lower) {
+                              @RequestParam(value = "employee", required = false) String employee
+                             ) {
         try {
 
             if (Objects.equals(page, null)) {
@@ -45,11 +48,14 @@ public class SaleController extends AbstractService<Sale> {
             }
 
             if (Objects.equals(size, null)) {
-                size = 30;
+                size = 1000;
             }
 
-            return new AppResponse("", this.saleService.findAll(new AppPaginator(page, size), status, customerName,employee, upper, lower));
+            var x = this.saleService.findAll(new AppPaginator(page, size), status, customerName,employee);
+
+            return new AppResponse("",x );
         } catch (Exception ex) {
+            ex.printStackTrace();
             log.warn("Erro Interno" + ex);
             return AppResponse.OOPS;
         }
@@ -59,31 +65,21 @@ public class SaleController extends AbstractService<Sale> {
     @ResponseBody
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
-    public AppResponse save(@Valid @RequestBody Sale sale) throws AppNotFoundException {
-        try {
+    public AppResponse save( @RequestBody Sale sale) throws AppNotFoundException {
 
-            saleService.save(sale);
-            return new AppResponse("Venda atualizada!", false);
-        }catch (Exception ex) {
-            log.warn("Erro Interno" + ex);
-            return AppResponse.OOPS;
-        }
+
+
+            var saved = saleService.save(sale);
+            return new AppResponse("Venda atualizada!", saved);
+
     }
 
     @ResponseBody
     @GetMapping("/{code}")
     public AppResponse getByCode(@PathVariable("code") Long code) throws AppNotFoundException {
-        try {
 
             var x = saleService.findByCode(code);
             return new AppResponse("",x );
-        } catch (AppNotFoundException ex) {
-            return new AppResponse("Venda não encontrada!", null);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            log.warn("Erro Interno" + ex);
-            return AppResponse.OOPS;
-        }
     }
 
     @ResponseBody

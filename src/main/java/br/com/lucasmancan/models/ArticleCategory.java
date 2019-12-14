@@ -1,5 +1,6 @@
 package br.com.lucasmancan.models;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -35,11 +36,11 @@ public class ArticleCategory {
 	private String description;
     
 	@Column(name="created_at")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdAt;
+
+	private LocalDateTime createdAt;
 	
 	@Column(name="updated_at")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date updatedAt;
+
+	private LocalDateTime updatedAt;
 
 }
