@@ -1,10 +1,8 @@
 package br.com.lucasmancan.controllers;
 
 import br.com.lucasmancan.dtos.AppResponse;
-import br.com.lucasmancan.dtos.SaleDTO;
 import br.com.lucasmancan.exceptions.AppNotFoundException;
 import br.com.lucasmancan.models.Sale;
-import br.com.lucasmancan.models.Status;
 import br.com.lucasmancan.services.AbstractService;
 import br.com.lucasmancan.services.SaleService;
 import br.com.lucasmancan.utils.AppPaginator;
@@ -15,12 +13,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import java.math.BigDecimal;
 import java.util.Objects;
-
-import static br.com.lucasmancan.models.Status.active;
-import static br.com.lucasmancan.models.Status.inactive;
 
 @RestController
 @RequestMapping("/api/sales")
@@ -67,10 +60,15 @@ public class SaleController extends AbstractService<Sale> {
     @ResponseStatus(code = HttpStatus.CREATED)
     public AppResponse save( @RequestBody Sale sale) throws AppNotFoundException {
 
-
+        try {
 
             var saved = saleService.save(sale);
             return new AppResponse("Venda atualizada!", saved);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return AppResponse.OOPS;
+        }
 
     }
 

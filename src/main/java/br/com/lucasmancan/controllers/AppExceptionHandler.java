@@ -4,14 +4,15 @@ import br.com.lucasmancan.dtos.AppResponse;
 import br.com.lucasmancan.exceptions.AppException;
 import br.com.lucasmancan.exceptions.AppNotFoundException;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
@@ -29,6 +30,22 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
     public final ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request) {
         ex.printStackTrace();
         log.log(Level.INFO, "" + ex.getMessage());
+        return new ResponseEntity(
+                AppResponse.OOPS, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    @ResponseBody
+    public ResponseEntity<Object> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
+        Class<?> type = e.getRequiredType();
+        String message;
+        if (type.isEnum()) {
+            message = "The parameter " + e.getName() + " must have a value among : " + StringUtils.join(type.getEnumConstants(), ", ");
+        } else {
+            message = "The parameter " + e.getName() + " must be of type " + type.getTypeName();
+        }
+
+        e.printStackTrace();
         return new ResponseEntity(
                 AppResponse.OOPS, HttpStatus.INTERNAL_SERVER_ERROR);
     }

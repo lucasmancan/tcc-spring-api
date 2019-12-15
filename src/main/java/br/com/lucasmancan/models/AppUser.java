@@ -1,6 +1,7 @@
 package br.com.lucasmancan.models;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -10,7 +11,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -45,7 +45,7 @@ public class AppUser implements Serializable, UserDetails, Authentication {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")
-    @JsonIgnoreProperties(value = {"admin"})
+    @JsonIgnoreProperties(value = {"admin"}, allowSetters = true)
     private Account account;
 
     @Enumerated(EnumType.STRING)
