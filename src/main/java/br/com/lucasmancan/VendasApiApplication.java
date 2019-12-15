@@ -2,25 +2,16 @@ package br.com.lucasmancan;
 
 import br.com.lucasmancan.models.*;
 import br.com.lucasmancan.repositories.*;
-import br.com.lucasmancan.services.AccountService;
 import br.com.lucasmancan.services.CustomerService;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;import java.util.Date;
 
 @SpringBootApplication
 @EnableCaching
@@ -45,15 +36,6 @@ public class VendasApiApplication implements CommandLineRunner {
     @Autowired
     private CustomerService customerRepository;
 
-
-    @Bean(name = "OBJECT_MAPPER_BEAN")
-    public ObjectMapper jsonObjectMapper() {
-        return Jackson2ObjectMapperBuilder.json()
-                .serializationInclusion(JsonInclude.Include.NON_NULL) // Don’t include null values
-                .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS) //ISODate
-                .modules(new JSR310Module())
-                .build();
-    }
 
     public static void main(String[] args) {
         SpringApplication.run(VendasApiApplication.class, args);

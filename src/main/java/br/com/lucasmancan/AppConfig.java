@@ -1,7 +1,10 @@
 package br.com.lucasmancan;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import net.sf.ehcache.config.CacheConfiguration;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -25,8 +28,8 @@ import java.util.List;
 @Configuration
 @EnableCaching
 @EnableWebMvc
-@ComponentScan({ "br.com.lucasmancan.*" })
-public class AppConfig  extends WebMvcConfigurerAdapter {
+@ComponentScan({"br.com.lucasmancan.*"})
+public class AppConfig extends WebMvcConfigurerAdapter {
 
     private final Logger log = LoggerFactory.getLogger(CacheConfiguration.class);
 
@@ -48,6 +51,16 @@ public class AppConfig  extends WebMvcConfigurerAdapter {
     }
 
     @Bean
+    public ObjectMapper getObjectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new Hibernate5Module());
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        return mapper;
+    }
+
+    @Bean
     public EhCacheManagerFactoryBean ehCacheCacheManager() {
         EhCacheManagerFactoryBean cmfb = new EhCacheManagerFactoryBean();
         cmfb.setConfigLocation(new ClassPathResource("ehcache.xml"));
@@ -55,14 +68,11 @@ public class AppConfig  extends WebMvcConfigurerAdapter {
         return cmfb;
     }
 
-    public MappingJackson2HttpMessageConverter jacksonMessageConverter(){
+    public MappingJackson2HttpMessageConverter jacksonMessageConverter() {
         MappingJackson2HttpMessageConverter messageConverter = new MappingJackson2HttpMessageConverter();
 
-        ObjectMapper mapper = new ObjectMapper();
-        //Registering Hibernate4Module to support lazy objects
-        mapper.registerModule(new Hibernate5Module());
 
-        messageConverter.setObjectMapper(mapper);
+        messageConverter.setObjectMapper(getObjectMapper());
         return messageConverter;
 
     }
