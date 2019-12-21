@@ -7,7 +7,6 @@ import java.util.Arrays;
 
 public enum Status {
     @JsonProperty("pending")
-
     pending,
     @JsonProperty("approved")
     approved,
@@ -25,7 +24,9 @@ public enum Status {
 
         System.out.println("TESTE:" + key);
 
-        return Arrays.stream(Status.values()).filter(v -> v.name().equals(key)).findFirst().orElse(null);
+        return Arrays.stream(Status.values()).filter(v -> v.name().equals(key))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Status não encontrado."));
     }
 
 }

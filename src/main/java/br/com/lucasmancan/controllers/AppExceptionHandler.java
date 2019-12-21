@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -32,6 +33,18 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
         log.log(Level.INFO, "" + ex.getMessage());
         return new ResponseEntity(
                 AppResponse.OOPS, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+
+    //    @ExceptionHandler({HttpMessageConversionException.class}IllegalArgumentException.class)
+    @ExceptionHandler({HttpMessageConversionException.class, IllegalArgumentException.class})
+    public final ResponseEntity<Object> handleIllegalArgumentException(Exception ex, WebRequest request) {
+        ex.printStackTrace();
+        log.log(Level.INFO, "" + ex.getMessage());
+
+        response.setMessage("Confira os dados informados e tente novamente");
+        return new ResponseEntity(
+                response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
